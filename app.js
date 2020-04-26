@@ -6,6 +6,7 @@ var pac_color;
 var start_time;
 var time_elapsed;
 var interval;
+var direction;
 
 $(document).ready(function() {
 	context = canvas.getContext("2d");
@@ -14,6 +15,7 @@ $(document).ready(function() {
 
 function Start() {
 	board = new Array();
+	direction = 'right';
 	score = 0;
 	pac_color = "yellow";
 	var cnt = 100;
@@ -69,7 +71,7 @@ function Start() {
 		},
 		false
 	);
-	interval = setInterval(UpdatePosition, 250);
+	interval = setInterval(UpdatePosition, 100);
 }
 
 function findRandomEmptyCell(board) {
@@ -107,15 +109,8 @@ function Draw() {
 			center.x = i * 60 + 30;
 			center.y = j * 60 + 30;
 			if (board[i][j] == 2) {
-				context.beginPath();
-				context.arc(center.x, center.y, 30, 0.15 * Math.PI, 1.85 * Math.PI); // half circle
-				context.lineTo(center.x, center.y);
-				context.fillStyle = pac_color; //color
-				context.fill();
-				context.beginPath();
-				context.arc(center.x + 5, center.y - 15, 5, 0, 2 * Math.PI); // circle
-				context.fillStyle = "black"; //color
-				context.fill();
+				DrawPacMan(center);
+				DrawEye(center);
 			} else if (board[i][j] == 1) {
 				context.beginPath();
 				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
@@ -130,27 +125,59 @@ function Draw() {
 		}
 	}
 }
+function DrawPacMan(center){
+	context.beginPath();
+	if(direction == 'right')
+		context.arc(center.x, center.y, 30, 0.15 * Math.PI, 1.85 * Math.PI); // half circle
+	if(direction == 'left')
+		context.arc(center.x, center.y, 30, (0.15 + 1) * Math.PI, (1.85 + 1) * Math.PI); // half circle
+	if(direction == 'down')
+		context.arc(center.x, center.y, 30, (0.15 + 0.5) * Math.PI, (1.85+0.5) * Math.PI); // half circle
+	if(direction == 'up')
+		context.arc(center.x, center.y, 30, (0.15 - 0.5) * Math.PI, (1.85 - 0.5) * Math.PI); // half circle
+	context.lineTo(center.x, center.y);
+	context.fillStyle = pac_color; //color
+	context.fill();
+}
+
+function DrawEye(center){
+	context.beginPath();
+	if (direction == 'right')
+		context.arc(center.x + 5, center.y - 15, 5, 0, 2 * Math.PI); // circle
+	if (direction == 'left')
+		context.arc(center.x - 5, center.y - 15, 5, 0, 2 * Math.PI); // circle
+	if (direction == 'down')
+		context.arc(center.x + 15, center.y, 5, 0, 2 * Math.PI); // circle
+	if (direction == 'up')
+		context.arc(center.x + 15, center.y, 5, 0, 2 * Math.PI); // circle
+	context.fillStyle = "black"; //color
+	context.fill();
+}
 
 function UpdatePosition() {
 	board[shape.i][shape.j] = 0;
 	var x = GetKeyPressed();
 	if (x == 1) {
 		if (shape.j > 0 && board[shape.i][shape.j - 1] != 4) {
+			direction = 'up';
 			shape.j--;
 		}
 	}
 	if (x == 2) {
 		if (shape.j < 9 && board[shape.i][shape.j + 1] != 4) {
+			direction = 'down';
 			shape.j++;
 		}
 	}
 	if (x == 3) {
 		if (shape.i > 0 && board[shape.i - 1][shape.j] != 4) {
+			direction = 'left';
 			shape.i--;
 		}
 	}
 	if (x == 4) {
 		if (shape.i < 9 && board[shape.i + 1][shape.j] != 4) {
+			direction = 'right';
 			shape.i++;
 		}
 	}
