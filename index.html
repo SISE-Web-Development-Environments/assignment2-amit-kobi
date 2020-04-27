@@ -3,19 +3,118 @@
 	<head>
 		<script src="./jquery-3.4.1.slim.min.js"></script>
 		<script type="text/javascript" src="./app.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<link rel="stylesheet" href="style.css">
 	</head>
-
+	<nav class="navbar navbar-dark bg-primary" style="">
+		<div class="">
+			<ul id="navList" class="navbar-nav mr-auto">
+				<li class="nav-item">
+					<button class="btn btn-dark" type="button">Welcome</button>
+				</li>
+				<li class="nav-item">
+					<button class="btn btn-dark" type="button">Register</button>
+				</li>
+				<li class="nav-item">
+					<button class="btn btn-dark" type="button">Login</button>
+				</li>
+				<li class="nav-item">
+					<button class="btn btn-dark" type="button">About</button>
+				</li>
+			</ul>
+		</div>
+		<script>
+			$(document).ready(function () {
+				$('nav').find('button:contains("Welcome")').removeClass('btn-dark').addClass('btn-dark.active');
+			});
+		</script>
+		<script>
+			$(".btn.btn-dark").on('click', function (event) {
+				var hide,show;
+				$('#navList').find('button').each(function(i,rowValue){
+					if($(this).hasClass('btn-dark.active')){
+						$(this).removeClass('btn-dark.active').addClass('btn-dark');
+						hide = $(this).text();
+					}
+				});
+				$(this).removeClass('btn-dark').addClass('btn-dark.active');
+				show = $(this).text();
+				$('body').find('> div').each(function (i,rowValue){
+					if($(this).attr('id') != undefined){
+						if($(this).attr('id') == hide){
+							$(this).css('display','none');
+						}
+						if($(this).attr('id') == show){
+							$(this).css('display', 'block');
+						}
+					}
+				});
+			});
+		</script>
+	</nav>
 	<body>
-		<div id="score">
-			<label for="lblScore">SCORE:</label>
-			<input id="lblScore" type="text" />
+		<div id='gameContainer' style="display:none;">
+			<div id="score">
+				<label for="lblScore">SCORE:</label>
+				<input id="lblScore" type="text" />
+			</div>
+			<div id="time">
+				<label for="lblTime">TIME:</label>
+				<input id="lblTime" type="text" />
+			</div>
+			<div id="game">
+				<canvas id="canvas" height="600" width="600"></canvas>
+			</div>
 		</div>
-		<div id="time">
-			<label for="lblTime">TIME:</label>
-			<input id="lblTime" type="text" />
+		<div id='Welcome'>
+			<div id="images">
+				<img class='stable' src='example.png'>
+				<img class='effect' src='example.png'>
+				<img class='effect' src='example.png'>
+				<img class='effect' src='example.png'>
+			</div>
+			<br>
+			<br>
+			<div>
+				<button class="btn btn-dark">Click me</button>
+				<button class="btn btn-dark">Click me</button>
+			</div>
 		</div>
-		<div id="game">
-			<canvas id="canvas" height="600" width="600"></canvas>
+		<div id='Login' class="login-form" style="display: none;">
+			<h1>Login</h1>
+			<form action="/controllers/authenticate-controller" method="POST">
+				<input type="text" name="username" placeholder="Username" required="required" />
+				<input type="password" name="password" placeholder="Password" required="required" />
+				<div class="container">
+					<input type="submit" />
+					<input type="button" value="Register" onclick="moveToRegister()"/>
+				</div>
+			</form>
+		</div>
+		<div id='Register' class="register-form" style="display: none;">
+			<h1>Register</h1>
+			<form action="/controllers/register-controller" method="POST">
+				<label class="popup" id="username" for="username">
+					Username:
+				</label>
+				<input id="register-form" type="text" placeholder="Username" name="username" required="required" />
+				<label class="popup" id="email" for="email">
+					Email:
+				</label>
+				<input id="register-form" type="text" placeholder="Email" name="email" required="required" />
+				<label class="popup" id="password" for="password">
+					Password:
+				</label>
+				<input id="register-form" type="password" placeholder="Password" name="password" required="required" />
+				<div class="container">
+					<input type="submit" />
+					<input type="button" value="Back" onclick="moveToHome()" />
+				</div>
+			</form>
 		</div>
 	</body>
+	<br>
+	<br>
+	<header>Created by: Amit Sultan and Koby Mallah</header>
 </html>
