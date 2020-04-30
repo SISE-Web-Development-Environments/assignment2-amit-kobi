@@ -15,6 +15,7 @@ var pacmanPosition;
 var ghostsPositions;
 var ghostsColors = ["Red","#0D0","Blue","Cyan"];
 var isGhostDead;
+var ghostsCounter = 0;
 
 $(document).ready(function() {
 	context = canvas.getContext("2d");
@@ -84,7 +85,7 @@ function Start() {
 		},
 		false
 	);
-	interval = setInterval(UpdatePosition, 150);
+	interval = setInterval(UpdatePosition, 50);
 }
 
 function findRandomEmptyCell(board) {
@@ -198,29 +199,29 @@ function UpdatePosition() {
 			direction = 'up';
 			shape.j--;
 		}
-		moveGhosts();
 	}
 	if (x == 2) {
 		if (shape.j < 9 && board[shape.i][shape.j + 1] != 4) {
 			direction = 'down';
 			shape.j++;
 		}
-		moveGhosts();
 	}
 	if (x == 3) {
 		if (shape.i > 0 && board[shape.i - 1][shape.j] != 4) {
 			direction = 'left';
 			shape.i--;
 		}
-		moveGhosts();
 	}
 	if (x == 4) {
 		if (shape.i < 9 && board[shape.i + 1][shape.j] != 4) {
 			direction = 'right';
 			shape.i++;
 		}
+	}
+	if (ghostsCounter % 20 == 0){
 		moveGhosts();
 	}
+	ghostsCounter++;
 	if (board[shape.i][shape.j] == 1) {
 		score++;
 	}
