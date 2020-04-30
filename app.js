@@ -14,7 +14,7 @@ var pacmanPosition;
 
 var ghostsPositions;
 var ghostsColors = ["Red","#0D0","Blue","Cyan"];
-var isGhostDead = [false, false, false, false];
+var isGhostDead;
 
 $(document).ready(function() {
 	context = canvas.getContext("2d");
@@ -28,6 +28,7 @@ function Start() {
 	lives = 5;
 	pac_color = "yellow";
 	ghostsPositions = [[0,0], [0, 9], [9, 0], [9, 9]];
+	isGhostDead = [false, false, false, false];
 	var cnt = 100;
 	var food_remain = 50;
 	var pacman_remain = 1;
@@ -83,7 +84,7 @@ function Start() {
 		},
 		false
 	);
-	interval = setInterval(UpdatePosition, 125);
+	interval = setInterval(UpdatePosition, 150);
 }
 
 function findRandomEmptyCell(board) {
@@ -197,24 +198,28 @@ function UpdatePosition() {
 			direction = 'up';
 			shape.j--;
 		}
+		moveGhosts();
 	}
 	if (x == 2) {
 		if (shape.j < 9 && board[shape.i][shape.j + 1] != 4) {
 			direction = 'down';
 			shape.j++;
 		}
+		moveGhosts();
 	}
 	if (x == 3) {
 		if (shape.i > 0 && board[shape.i - 1][shape.j] != 4) {
 			direction = 'left';
 			shape.i--;
 		}
+		moveGhosts();
 	}
 	if (x == 4) {
 		if (shape.i < 9 && board[shape.i + 1][shape.j] != 4) {
 			direction = 'right';
 			shape.i++;
 		}
+		moveGhosts();
 	}
 	if (board[shape.i][shape.j] == 1) {
 		score++;
@@ -226,6 +231,7 @@ function UpdatePosition() {
 		} else {
 			lives--;
 			window.alert("You died!");
+			Start();
 		}
 	}
 	if (board[shape.i][shape.j] == 5) {
@@ -235,7 +241,6 @@ function UpdatePosition() {
 		power = true;
 		powerTimer = new Date();
 	}
-	moveGhosts();
 	board[shape.i][shape.j] = 2;
 	let currentTime = new Date();
 	time_elapsed = (currentTime - start_time) / 1000;
@@ -251,6 +256,7 @@ function UpdatePosition() {
 	if (score >= 50) {
 		window.clearInterval(interval);
 		window.alert("Game completed");
+		Start();
 	} else {
 		Draw();
 	}
@@ -342,32 +348,30 @@ function moveGhosts(){
 }
 
 function moveGhost(ghostID){
-	let distance = getDistanceFromPacman(ghostsPositions[ghostID])
+	let x = ghostsPositions[ghostID][0];
+	let y = ghostsPositions[ghostID][1];
+	let distance = getDistanceFromPacman(x, y);
 	if (power){
-		if (distance.x > 0 && board[ghostsPositions[ghostID][0] + 1][ghostsPositions[ghostID][1]] != 4){
-			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
+		if (distance.x > 0 && x + 1 < 9 && board[x + 1][y] != 4 && getGhostId(x + 1, y) == -1){
 			ghostsPositions[ghostID][0]++;
-		} else if (distance.x < 0 && board[ghostsPositions[ghostID][0] - 1][ghostsPositions[ghostID][1]] != 4){
-			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
+		} else if (distance.x < 0 && x - 1 >= 0 && board[x - 1][y] != 4 && getGhostId(x - 1, y) == -1){
 			ghostsPositions[ghostID][0]--;
-		} else if (distance.y > 0 && board[ghostsPositions[ghostID][0]][ghostsPositions[ghostID][1] + 1] != 4){
-			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
+		} else if (distance.y > 0 && y + 1 < 9 && board[x][y + 1] != 4 && getGhostId(x, y + 1) == -1){
 			ghostsPositions[ghostID][1]++;
-		} else if (distance.y < 0 && board[ghostsPositions[ghostID][0]][ghostsPositions[ghostID][1] - 1] != 4){
-			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
+		} else if (distance.y < 0 && y - 1 >= 0 && board[x][y - 1] != 4 && getGhostId(x, y - 1) == -1){
 			ghostsPositions[ghostID][1]--;
 		}
 	} else{
-		if (distance.x > 0 && board[ghostsPositions[ghostID][0] - 1][ghostsPositions[ghostID][1]] != 4){
+		if (distance.x > 0 && x - 1 >= 0 && board[x - 1][y] != 4 && getGhostId(x - 1, y) == -1){
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][0]--;
-		} else if (distance.x < 0 && board[ghostsPositions[ghostID][0] + 1][ghostsPositions[ghostID][1]] != 4){
+		} else if (distance.x < 0 && x + 1 < 9 && board[x + 1][y] != 4 && getGhostId(x + 1, y) == -1){
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][0]++;
-		} else if (distance.y > 0 && board[ghostsPositions[ghostID][0]][ghostsPositions[ghostID][1] - 1] != 4){
+		} else if (distance.y > 0 && y - 1 >= 0 && board[x][y - 1] != 4 && getGhostId(x, y - 1) == -1){
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][1]--;
-		} else if (distance.y < 0 && board[ghostsPositions[ghostID][0]][ghostsPositions[ghostID][1] + 1] != 4){
+		} else if (distance.y < 0 && y + 1 < 9 && board[x][y + 1] != 4 && getGhostId(x, y + 1) == -1){
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][1]++;
 		}
