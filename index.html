@@ -105,43 +105,45 @@
 						<label class='titleLabel'>Movement controllers</label>
 						<br>
 						<br>
-						<input id='upKey' class='KeyInput' value="ArrowUp"></input>
+						<label style="padding-left: 45px;">Up</label>
+						<input id='upKey' class='KeyInput' value="38"></input>
 						<div>
-							<input id='leftKey' class='KeyInput' value="ArrowLeft"></input>
-							<input id='downKey' class='KeyInput' value="ArrowDown"></input>
-							<input id='rightKey' class='KeyInput' value="ArrowRight"></input>
+							<p style="margin: 0em;word-spacing: 30px;">Left Down Right</p>
+							<input id='leftKey' class='KeyInput' value="37"></input>
+							<input id='downKey' class='KeyInput' value="40"></input>
+							<input id='rightKey' class='KeyInput' value="39"></input>
 						</div>
 						<label class='titleLabel'>Number of balls</label>
-						<input type="number" name="ballCount" placeholder="Min:50 Max:90" min="50" max="90" />
+						<input type="number" id="ballCount" name="ballCount" placeholder="Min:50 Max:90" min="50" max="90" />
 						<label class='titleLabel'>Color of balls</label>
 						<div>
 							<ul>
 								<li class='colorItem'>
 									<label>5 Pts</label>
-									<input type="color" name="5Color" />
+									<input id="color1" type="color" name="5Color" />
 								</li>
 								<li class='colorItem'>
 									<label>15 Pts</label>
-									<input type="color" name="15Color" />
+									<input id="color2"  type="color" name="15Color" />
 								</li>
 								<li class='colorItem'>
 									<label>25 Pts</label>
-									<input type="color" name="25Color" />
+									<input id="color3"  type="color" name="25Color" />
 								</li>
 							</ul>
 						</div>
 						<label class='titleLabel'>Time in seconds</label>
-						<input type="number" name="time" placeholder="Min:60" min="60" />
+						<input id="totalTime" type="number" name="time" placeholder="Min:60" min="60" />
 						<label class='titleLabel'>Number of mobs</label>
-						<input type="number" name="time" placeholder="Min:1 Max:4" min="1" max="4" />
+						<input id="mobCount" type="number" name="mobs" placeholder="Min:1 Max:4" min="1" max="4" />
 						<div class="container">
-							<input type="button" value="Start" onclick="setPage('Login','Register')" />
-							<input type="button" value="Random" onclick="setPage('Login','Register')" />
+							<input type="button" value="Start" onclick="setSettings()" />
+							<input type="button" value="Random" onclick="randomSettings()" />
 						</div>
 					</div>
 				<script>
 					$(".KeyInput").keydown('keydown', function (event) {
-						$(this).val(event.code);
+						$(this).val(event.keyCode);
 					});
 				</script>
 			</div>

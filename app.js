@@ -37,7 +37,14 @@ $(document).ready(function () {
 });
 
 function setParameters(_controlKeys, _numberOfBalls, _ballsColors, _totalGameTime, _numberOfGhosts) {
-
+	console.log(_controlKeys, _numberOfBalls, _ballsColors, _totalGameTime, _numberOfGhosts);
+	controlKeys = _controlKeys;
+	numberOfBalls = _numberOfBalls;
+	ballsColors = _ballsColors;
+	totalGameTime = _totalGameTime;
+	numberOfGhosts = _numberOfGhosts;
+	window.clearInterval(interval);
+	Start();
 }
 
 function Start() {
@@ -506,4 +513,53 @@ function movePrincessPeach() {
 			}
 		}
 	}
+}
+
+function randomSettings(){
+	_controlKeys = [38, 40, 37, 39];
+	_numberOfBalls = getRandomArbitrary(50,91);
+	_ballsColors = [getRandomColor(), getRandomColor(), getRandomColor()];
+	_totalGameTime = getRandomArbitrary(60,360);
+	_numberOfGhosts = getRandomArbitrary(1,5);
+	setParameters(_controlKeys, _numberOfBalls, _ballsColors, _totalGameTime, _numberOfGhosts);
+}
+
+function setSettings(){
+	var up = parseInt(document.getElementById("upKey").value);
+	var down = parseInt(document.getElementById("downKey").value);
+	var left = parseInt(document.getElementById("leftKey").value);
+	var right = parseInt(document.getElementById("rightKey").value);
+	_controlKeys = [up,down,left,right];
+	var _numberOfBalls = parseInt(document.getElementById("ballCount").value);
+	if(_numberOfBalls > 90 || _numberOfBalls < 50){
+		alert("Number of balls must be between 50 to 90");
+	}else{
+	var color1 = document.getElementById("color1").value;
+	var color2 = document.getElementById("color2").value;
+	var color3 = document.getElementById("color3").value;
+	_ballsColors =[color1,color2,color3];
+		_totalGameTime = parseInt(document.getElementById("totalTime").value);
+	if(_totalGameTime < 60){
+		alert("total game time must be atleast 60 seconds");
+	}else{
+		_numberOfGhosts = parseInt(document.getElementById("mobCount").value);
+		if(_numberOfGhosts > 4 || _numberOfGhosts < 1){
+			alert("Must be between 1 to 4 ghosts");
+		}else{
+			setParameters(_controlKeys,_numberOfBalls,_ballsColors,_totalGameTime,_numberOfGhosts);
+		}
+	}
+}
+}
+// euqal or higher then min and lower not equal to max
+function getRandomArbitrary(min, max) {
+	return Math.floor(Math.random() * (max - min) + min);
+}
+function getRandomColor() {
+	var letters = '0123456789ABCDEF';
+	var color = '#';
+	for (var i = 0; i < 6; i++) {
+		color += letters[Math.floor(Math.random() * 16)];
+	}
+	return color;
 }
