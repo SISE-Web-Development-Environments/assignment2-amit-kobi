@@ -3,7 +3,7 @@
 	<head>
 		<script src="./jquery-3.4.1.slim.min.js"></script>
 		<script type="text/javascript" src="app.js"></script>
-		<script type="text/javascript" src="serverSide.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
 			integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 		<link rel="stylesheet" href="style.css">
@@ -21,7 +21,7 @@
 					<button class="btn btn-dark" type="button">Login</button>
 				</li>
 				<li class="nav-item" id="navAbout">
-					<button class="btn btn-dark" type="button">About</button>
+					<button type="button" class="btn btn-dark" data-toggle="modal" data-target="#myModal">About</button>
 				</li>
 				<li class="nav-item" id="navGame">
 					<button id="GameStart"  class="btn btn-dark" type="button">Game</button>
@@ -47,6 +47,7 @@
 		</script>
 		<script>
 			$(".btn.btn-dark").on('click', function (event) {
+				if(this.innerHTML != 'About'){
 				var hide,show;
 				$('#navList').find('button').each(function(i,rowValue){
 					if($(this).hasClass('btn-dark.active')){
@@ -54,23 +55,23 @@
 						hide = $(this).text();
 					}
 				});
-				$(this).removeClass('btn-dark').addClass('btn-dark.active');
-				show = $(this).text();
-				$('body').find('> div').each(function (i,rowValue){
-					if($(this).attr('id') != undefined){
-						if($(this).attr('id') == hide){
-							$(this).css('display','none');
+					$(this).removeClass('btn-dark').addClass('btn-dark.active');
+					show = $(this).text();
+					$('body').find('> div').each(function (i,rowValue){
+						if($(this).attr('id') != undefined){
+							if($(this).attr('id') == hide){
+								$(this).css('display','none');
+							}
+							if($(this).attr('id') == show){
+								$(this).css('display', 'block');
+							}
 						}
-						if($(this).attr('id') == show){
-							$(this).css('display', 'block');
-						}
-					}
-				});
+					});
+				}
 			});
 		</script>
 		<script>
 			function setPage(hide,show){
-				console.log("change page");
 				$('#navList').find('button').each(function (i, rowValue) {
 					if ($(this).hasClass('btn-dark.active')) {
 						$(this).removeClass('btn-dark.active').addClass('btn-dark');
@@ -97,47 +98,47 @@
 		</script>
 	</nav>
 	<body>
-		<div id='Game' style="display: none;">
-			<div id='Settings' style="position: absolute; padding-left: 600px;">
-				<div id='settings' class="form">
-					<h1>Settings</h1>
-					<label class='titleLabel'>Movement controllers</label>
-					<br>
-					<br>
-					<input id='upKey' class='KeyInput' value="ArrowUp"></input>
-					<div>
-						<input id='leftKey' class='KeyInput' value="ArrowLeft"></input>
-						<input id='downKey' class='KeyInput' value="ArrowDown"></input>
-						<input id='rightKey' class='KeyInput' value="ArrowRight"></input>
+			<div id='Game' style="display: none;">
+				<div id='Settings' style="position: absolute; padding-left: 600px;">
+					<div id='settings' class="form">
+						<h1>Settings</h1>
+						<label class='titleLabel'>Movement controllers</label>
+						<br>
+						<br>
+						<input id='upKey' class='KeyInput' value="ArrowUp"></input>
+						<div>
+							<input id='leftKey' class='KeyInput' value="ArrowLeft"></input>
+							<input id='downKey' class='KeyInput' value="ArrowDown"></input>
+							<input id='rightKey' class='KeyInput' value="ArrowRight"></input>
+						</div>
+						<label class='titleLabel'>Number of balls</label>
+						<input type="number" name="ballCount" placeholder="Min:50 Max:90" min="50" max="90" />
+						<label class='titleLabel'>Color of balls</label>
+						<div>
+							<ul>
+								<li class='colorItem'>
+									<label>5 Pts</label>
+									<input type="color" name="5Color" />
+								</li>
+								<li class='colorItem'>
+									<label>15 Pts</label>
+									<input type="color" name="15Color" />
+								</li>
+								<li class='colorItem'>
+									<label>25 Pts</label>
+									<input type="color" name="25Color" />
+								</li>
+							</ul>
+						</div>
+						<label class='titleLabel'>Time in seconds</label>
+						<input type="number" name="time" placeholder="Min:60" min="60" />
+						<label class='titleLabel'>Number of mobs</label>
+						<input type="number" name="time" placeholder="Min:1 Max:4" min="1" max="4" />
+						<div class="container">
+							<input type="button" value="Start" onclick="setPage('Login','Register')" />
+							<input type="button" value="Random" onclick="setPage('Login','Register')" />
+						</div>
 					</div>
-					<label class='titleLabel'>Number of balls</label>
-					<input type="number" name="ballCount" placeholder="Min:50 Max:90" min="50" max="90" />
-					<label class='titleLabel'>Color of balls</label>
-					<div>
-						<ul>
-							<li class='colorItem'>
-								<label>5 Pts</label>
-								<input type="color" name="5Color" />
-							</li>
-							<li class='colorItem'>
-								<label>15 Pts</label>
-								<input type="color" name="15Color" />
-							</li>
-							<li class='colorItem'>
-								<label>25 Pts</label>
-								<input type="color" name="25Color" />
-							</li>
-						</ul>
-					</div>
-					<label class='titleLabel'>Time in seconds</label>
-					<input type="number" name="time" placeholder="Min:60" min="60" />
-					<label class='titleLabel'>Number of mobs</label>
-					<input type="number" name="time" placeholder="Min:1 Max:4" min="1" max="4" />
-					<div class="container">
-						<input type="button" value="Start" onclick="setPage('Login','Register')" />
-						<input type="button" value="Random" onclick="setPage('Login','Register')" />
-					</div>
-				</div>
 				<script>
 					$(".KeyInput").keydown('keydown', function (event) {
 						$(this).val(event.code);
@@ -189,7 +190,7 @@
 				<input type="text" id="loginName" name="username" placeholder="Username" required="required" />
 				<input type="password" id="loginPassword" name="password" placeholder="Password" required="required" />
 				<div class="container">
-					<input type="button" id="loginButton" value="Login" id ="loginSubmit" onclick="authUser()"/>
+					<input type="button" id="loginButton" value="Login" id ="loginSubmit"/>
 					<input type="button" value="Register" onclick="setPage('Login','Register')"/>
 				</div>
 				<script>
@@ -198,7 +199,7 @@
 						var password = $('#loginPassword').val();
 						if (localStorage.getItem(username) == password) {
 							$("#welcomeLabel").html('Welcome back ' + username + '!');
-							setPage('Login','Welcome');
+							setPage('Login','Game');
 							successfulLogin();
 						} else {
 							alert("username or password are incorrect!");
@@ -257,14 +258,48 @@
 						} else if (date) {
 							localStorage.setItem(username, password);
 							$("#welcomeLabel").html('Welcome '+username+'!');
-							setPage('Register', 'Welcome');
+							setPage('Register', 'Game');
 							successfulLogin();
 						}
 					});
 				</script>
 			</form>
 		</div>
-
+		<div class="container">			
+			<!-- Modal -->
+			<div class="modal fade" id="myModal" role="dialog">
+				<div class="modal-dialog">
+					<!-- Modal content-->
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">About us</h4>
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+						<div class="modal-body">
+							<p>Amit Sultan: 205975444</p>
+							<p>Koby Mallah: 209722313</p>
+							<p>Our use of JQuery uses are as follow:</p>
+							<p>1) Handling registration form and login authentication</p>
+							<p>2) Loading different pages (Example: load login when clicked)</p>
+							<p>3) Handling menuBar effect (active buttons)</p>
+							<p>We used bootstrap 4.0.0 for the navigation bar template</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<script>
+				$(document).keydown(function (event) {
+					if (event.keyCode == 27) {
+						$('#myModal').modal('hide');
+					}
+				});
+			</script>
+		</div>
+			<img id="clock" src="Clock.png" style="display: none">
+			<img id="princessPeach" src="PrincessPeach.png" style="display: none">
 	</body>
 	<br>
 	<br>
