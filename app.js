@@ -8,22 +8,37 @@ var start_time;
 var time_elapsed;
 var interval;
 var direction;
-var power = false;
-var powerTimer;
 var pacmanPosition;
-var totalGameTime = 60;
 
+// Ghosts
 var ghostsPositions;
 var ghostsColors = ["Red", "#0D0", "Blue", "Cyan"];
 var isGhostDead;
 var ghostsCounter = 0;
+
+// Functionalities
 var ateClock = false;
+var power = false;
+var powerTimer;
+
+// Special character
 var princessPeachPosition = null;
 var atePrincessPeach = false;
+
+// Settings
+var controlKeys = [38, 40, 37, 39];
+var numberOfBalls = 50;
+var ballsColors = ['copper', 'silver', 'yellow'];
+var totalGameTime = 60;
+var numberOfGhosts = 1;
 
 $(document).ready(function () {
 	context = canvas.getContext("2d");
 });
+
+function setParameters(_controlKeys, _numberOfBalls, _ballsColors, _totalGameTime, _numberOfGhosts) {
+
+}
 
 function Start() {
 	board = new Array();
