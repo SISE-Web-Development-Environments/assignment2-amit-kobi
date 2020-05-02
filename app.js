@@ -114,7 +114,6 @@ function GetKeyPressed() {
 }
 
 function Draw() {
-	console.log('he');
 	canvas.width = canvas.width; //clean board
 	lblScore.value = score;
 	lblLives.value = lives;

@@ -3,6 +3,7 @@
 	<head>
 		<script src="./jquery-3.4.1.slim.min.js"></script>
 		<script type="text/javascript" src="app.js"></script>
+		<script type="text/javascript" src="serverSide.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
 			integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 		<link rel="stylesheet" href="style.css">
@@ -10,19 +11,19 @@
 	<nav class="navbar navbar-dark bg-primary" style="">
 		<div class="">
 			<ul id="navList" class="navbar-nav mr-auto">
-				<li class="nav-item">
+				<li class="nav-item" id="navWelcome">
 					<button class="btn btn-dark" type="button">Welcome</button>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item" id="navRegister">
 					<button class="btn btn-dark" type="button">Register</button>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item" id="navLogin">
 					<button class="btn btn-dark" type="button">Login</button>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item" id="navAbout">
 					<button class="btn btn-dark" type="button">About</button>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item" id="navGame">
 					<button id="GameStart"  class="btn btn-dark" type="button">Game</button>
 				</li>
 				<li class="nav-item">
@@ -35,7 +36,14 @@
 		<script>
 			$(document).ready(function () {
 				$('nav').find('button:contains("Welcome")').removeClass('btn-dark').addClass('btn-dark.active');
+				localStorage.setItem("p", "p");
 			});
+			function successfulLogin(){
+				$("#navRegister").remove();
+				$("#navLogin").remove();
+				$("#welcomeRegisterBtn").remove();
+				$("#welcomeLoginBtn").remove();
+			}
 		</script>
 		<script>
 			$(".btn.btn-dark").on('click', function (event) {
@@ -62,6 +70,7 @@
 		</script>
 		<script>
 			function setPage(hide,show){
+				console.log("change page");
 				$('#navList').find('button').each(function (i, rowValue) {
 					if ($(this).hasClass('btn-dark.active')) {
 						$(this).removeClass('btn-dark.active').addClass('btn-dark');
@@ -75,7 +84,7 @@
 							$(this).css('display', 'none');
 						}
 						if ($(this).attr('id') == show) {
-							$(this).css('display', 'flex');
+							$(this).css('display', 'block');
 						}
 					}
 				});
@@ -122,6 +131,8 @@
 					</div>
 					<label class='titleLabel'>Time in seconds</label>
 					<input type="number" name="time" placeholder="Min:60" min="60" />
+					<label class='titleLabel'>Number of mobs</label>
+					<input type="number" name="time" placeholder="Min:1 Max:4" min="1" max="4" />
 					<div class="container">
 						<input type="button" value="Start" onclick="setPage('Login','Register')" />
 						<input type="button" value="Random" onclick="setPage('Login','Register')" />
@@ -152,6 +163,7 @@
 		</div>
 
 		<div id='Welcome'>
+			<Label id="welcomeLabel"></Label>
 			<div id="images">
 				<img class='stable' src='example.png'>
 				<img class='effect' src='example.png'>
@@ -173,35 +185,83 @@
 
 		<div id='Login' class="form" style="display: none;">
 			<h1>Login</h1>
-			<form action="/controllers/authenticate-controller" method="POST">
-				<input type="text" name="username" placeholder="Username" required="required" />
-				<input type="password" name="password" placeholder="Password" required="required" />
+			<form>
+				<input type="text" id="loginName" name="username" placeholder="Username" required="required" />
+				<input type="password" id="loginPassword" name="password" placeholder="Password" required="required" />
 				<div class="container">
-					<input type="submit" />
+					<input type="button" id="loginButton" value="Login" id ="loginSubmit" onclick="authUser()"/>
 					<input type="button" value="Register" onclick="setPage('Login','Register')"/>
 				</div>
+				<script>
+					$("#loginButton").click(function () {
+						var username = $('#loginName').val();
+						var password = $('#loginPassword').val();
+						if (localStorage.getItem(username) == password) {
+							$("#welcomeLabel").html('Welcome back ' + username + '!');
+							setPage('Login','Welcome');
+							successfulLogin();
+						} else {
+							alert("username or password are incorrect!");
+						}
+					});
+				</script>
 			</form>
 		</div>
 
 		<div id='Register' class="form" style="display: none;">
 			<h1>Register</h1>
-			<form action="/controllers/register-controller" method="POST">
-				<label class="popup" id="username" for="username">
+			<form>
+				<label for="username">
 					Username:
 				</label>
-				<input  type="text" placeholder="Username" name="username" required="required" />
-				<label class="popup" id="email" for="email">
+				<input type="text" id="username" placeholder="Username" name="username"/>
+				<label for="fullName">
+					Full name:
+				</label>
+				<input type="text" id="fullName" placeholder="FullName" name="fullName"/>
+				<label for="email">
 					Email:
 				</label>
-				<input  type="text" placeholder="Email" name="email" required="required" />
-				<label class="popup" id="password" for="password">
+				<input type="text" id="email" placeholder="Email" name="email"/>
+				<label for="password">
 					Password:
 				</label>
-				<input  type="password" placeholder="Password" name="password" required="required" />
+				<input  type="password"  id = "password" placeholder="Password" name="password"/>
+
+				<label for="birthday">Birthday:</label>
+				<input type="date" id="birthday" name="birthday"/>
+				
 				<div class="container">
-					<input type="submit" />
+					<input type="button" id="registerButton" value="Register"/>
 					<input type="button" value="Back" onclick="setPage('Register','Welcome')" />
 				</div>
+				<script>
+					$("#registerButton").click(function(){
+						var username = $('#username').val();
+						var password = $('#password').val();
+						var email = $('#email').val();
+						var fullName = $('#fullName').val();
+						var date = $('#birthday').val();
+						var passwordReg = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+						var usernameReg = /^[a-zA-Z]+$/;
+						var fullNameReg = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
+						var emailReg = /^\w+([\.-]?\w+)+@\w+([\.:]?\w+)+(\.[a-zA-Z0-9]{2,3})+$/;
+						if (!passwordReg.test(password)) {
+							alert("Password must contain atleast 6 characters");
+						} else if (!usernameReg.test(username)) {
+							alert("Username cannot contain numbers");
+						} else if (!emailReg.test(email)) {
+							alert("Email must be valid! Example@example.com");
+						} else if (!fullNameReg.test(fullName)) {
+							alert("Personal name cannot contain numbers");
+						} else if (date) {
+							localStorage.setItem(username, password);
+							$("#welcomeLabel").html('Welcome '+username+'!');
+							setPage('Register', 'Welcome');
+							successfulLogin();
+						}
+					});
+				</script>
 			</form>
 		</div>
 
