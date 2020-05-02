@@ -11,11 +11,15 @@ var direction;
 var power = false;
 var powerTimer;
 var pacmanPosition;
+var totalGameTime = 60;
 
 var ghostsPositions;
 var ghostsColors = ["Red", "#0D0", "Blue", "Cyan"];
 var isGhostDead;
 var ghostsCounter = 0;
+var ateClock = false;
+var princessPeachPosition = null;
+var atePrincessPeach = false;
 
 $(document).ready(function () {
 	context = canvas.getContext("2d");
@@ -50,7 +54,7 @@ function Start() {
 				if (randomNum <= (1.0 * food_remain) / cnt) {
 					food_remain--;
 					board[i][j] = 1;
-				} else if (randomNum < (1.0 * (pacman_remain + food_remain)) / cnt && getGhostId(i, j) == -1) {
+				} else if (randomNum < (1.0 * (pacman_remain + food_remain)) / cnt && i <= 7 && i >= 3 && j <= 7 && j >= 3) {
 					shape.i = i;
 					shape.j = j;
 					pacman_remain--;
@@ -69,6 +73,8 @@ function Start() {
 		food_remain--;
 	}
 	addPills();
+	addClock();
+	setPrincessPeachPosition();
 	keysDown = {};
 	addEventListener(
 		"keydown",
@@ -118,7 +124,8 @@ function Draw() {
 	canvas.width = canvas.width; //clean board
 	lblScore.value = score;
 	lblLives.value = lives;
-	lblTime.value = time_elapsed;
+	let addTime = ateClock ? 5 : 0;
+	lblTime.value = Math.floor(totalGameTime - time_elapsed + addTime);
 	for (var i = 0; i < 10; i++) {
 		for (var j = 0; j < 10; j++) {
 			var center = new Object();
@@ -137,8 +144,7 @@ function Draw() {
 				context.rect(center.x - 30, center.y - 30, 60, 60);
 				context.fillStyle = "grey"; //color
 				context.fill();
-			}
-			else if (board[i][j] == 5) { // Life pill
+			} else if (board[i][j] == 5) { // Life pill
 				context.beginPath();
 				context.arc(center.x, center.y, 15, 0, Math.PI);
 				context.fillStyle = "red";
@@ -147,8 +153,7 @@ function Draw() {
 				context.arc(center.x, center.y, 15, 0, Math.PI, true);
 				context.fillStyle = "blue";
 				context.fill();
-			}
-			else if (board[i][j] == 6) { // Power pill
+			} else if (board[i][j] == 6) { // Power pill
 				context.beginPath();
 				context.arc(center.x, center.y, 15, 0, Math.PI);
 				context.fillStyle = "blue";
@@ -157,10 +162,16 @@ function Draw() {
 				context.arc(center.x, center.y, 15, 0, Math.PI, true);
 				context.fillStyle = "green";
 				context.fill();
+			} else if (board[i][j] == 7) { // Clock
+				let clockImage = document.getElementById("clock");
+				context.drawImage(clockImage, center.x - 30, center.y - 30, 60, 60);
 			}
 		}
 	}
 	drawGhosts();
+	if (!atePrincessPeach) {
+		drawPrincessPeach();
+	}
 }
 
 function DrawPacMan(center) {
@@ -221,6 +232,7 @@ function UpdatePosition() {
 	}
 	if (ghostsCounter % 10 == 0) {
 		moveGhosts();
+		movePrincessPeach();
 	}
 	ghostsCounter++;
 	if (board[shape.i][shape.j] == 1) {
@@ -232,8 +244,11 @@ function UpdatePosition() {
 			removeGhost(shape.i, shape.j);
 		} else {
 			lives--;
+			score -= 10;
 			window.clearInterval(interval);
 			window.alert("You died!");
+			ghostsPositions = [[0, 0], [0, 9], [9, 0], [9, 9]];
+			resetPacmanPosition();
 		}
 	}
 	if (board[shape.i][shape.j] == 5) {
@@ -242,6 +257,13 @@ function UpdatePosition() {
 	if (board[shape.i][shape.j] == 6) {
 		power = true;
 		powerTimer = new Date();
+	}
+	if (board[shape.i][shape.j] == 7) {
+		ateClock = true;
+	}
+	if (princessPeachPosition != null && shape.i == princessPeachPosition[0] && shape.j == princessPeachPosition[1]) {
+		atePrincessPeach = true;
+		score += 50;
 	}
 	board[shape.i][shape.j] = 2;
 	let currentTime = new Date();
@@ -255,7 +277,7 @@ function UpdatePosition() {
 			power = false;
 		}
 	}
-	if (score >= 50) {
+	if (score >= 100) {
 		window.clearInterval(interval);
 		window.alert("Game completed");
 		Start();
@@ -354,11 +376,11 @@ function moveGhost(ghostID) {
 	let y = ghostsPositions[ghostID][1];
 	let distance = getDistanceFromPacman(x, y);
 	if (power) {
-		if (distance.x > 0 && x + 1 < 9 && board[x + 1][y] != 4 && getGhostId(x + 1, y) == -1) {
+		if (distance.x > 0 && x + 1 <= 9 && board[x + 1][y] != 4 && getGhostId(x + 1, y) == -1) {
 			ghostsPositions[ghostID][0]++;
 		} else if (distance.x < 0 && x - 1 >= 0 && board[x - 1][y] != 4 && getGhostId(x - 1, y) == -1) {
 			ghostsPositions[ghostID][0]--;
-		} else if (distance.y > 0 && y + 1 < 9 && board[x][y + 1] != 4 && getGhostId(x, y + 1) == -1) {
+		} else if (distance.y > 0 && y + 1 <= 9 && board[x][y + 1] != 4 && getGhostId(x, y + 1) == -1) {
 			ghostsPositions[ghostID][1]++;
 		} else if (distance.y < 0 && y - 1 >= 0 && board[x][y - 1] != 4 && getGhostId(x, y - 1) == -1) {
 			ghostsPositions[ghostID][1]--;
@@ -367,13 +389,13 @@ function moveGhost(ghostID) {
 		if (distance.x > 0 && x - 1 >= 0 && board[x - 1][y] != 4 && getGhostId(x - 1, y) == -1) {
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][0]--;
-		} else if (distance.x < 0 && x + 1 < 9 && board[x + 1][y] != 4 && getGhostId(x + 1, y) == -1) {
+		} else if (distance.x < 0 && x + 1 <= 9 && board[x + 1][y] != 4 && getGhostId(x + 1, y) == -1) {
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][0]++;
 		} else if (distance.y > 0 && y - 1 >= 0 && board[x][y - 1] != 4 && getGhostId(x, y - 1) == -1) {
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][1]--;
-		} else if (distance.y < 0 && y + 1 < 9 && board[x][y + 1] != 4 && getGhostId(x, y + 1) == -1) {
+		} else if (distance.y < 0 && y + 1 <= 9 && board[x][y + 1] != 4 && getGhostId(x, y + 1) == -1) {
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][1]++;
 		}
@@ -406,6 +428,68 @@ function addPills() {
 		}
 		else {
 			board[position[0]][position[1]] = powerPill;
+		}
+	}
+}
+
+function addClock() {
+	let clock = 7;
+	let position = findRandomEmptyCell(board);
+	board[position[0]][position[1]] = clock;
+}
+
+function resetPacmanPosition() {
+	let position = findRandomEmptyCell(board);
+	while(!(position[0] <= 7 && position[0] >= 3 && position[1] <= 7 && position[1] >= 3)){
+		position = findRandomEmptyCell(board);
+	}
+	shape.i = position[0];
+	shape.j = position[1];
+}
+
+function setPrincessPeachPosition() {
+	if (isGhostDead[3]){
+		princessPeachPosition = [9,9];
+	} else {
+		princessPeachPosition = findRandomEmptyCell(board);
+	}
+}
+
+function drawPrincessPeach() {
+	let princessPeachImage = document.getElementById("princessPeach");
+	context.drawImage(princessPeachImage, princessPeachPosition[0] * 60, princessPeachPosition[1] * 60, 60, 60);
+}
+
+function movePrincessPeach() {
+	if (!atePrincessPeach) {
+		let moved = false;
+		while (!moved) {
+			let random = Math.floor(Math.random() * 4 + 1);
+			if (random == 1) { // Right
+				if (princessPeachPosition[0] + 1 > 9 || board[princessPeachPosition[0] + 1][princessPeachPosition[1]] == 4) {
+					continue;
+				}
+				princessPeachPosition[0]++;
+				moved = true;
+			} else if (random == 2) { // Left
+				if (princessPeachPosition[0] - 1 < 0 || board[princessPeachPosition[0] - 1][princessPeachPosition[1]] == 4) {
+					continue;
+				}
+				princessPeachPosition[0]--;
+				moved = true;
+			} else if (random == 3) { // Up
+				if (princessPeachPosition[1] - 1 < 0 || board[princessPeachPosition[0]][princessPeachPosition[1] - 1] == 4) {
+					continue;
+				}
+				princessPeachPosition[1]--;
+				moved = true;
+			} else { // Down
+				if (princessPeachPosition[1] + 1 > 9 || board[princessPeachPosition[0]][princessPeachPosition[1] + 1] == 4) {
+					continue;
+				}
+				princessPeachPosition[1]++;
+				moved = true;
+			}
 		}
 	}
 }
