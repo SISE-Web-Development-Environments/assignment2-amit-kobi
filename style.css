@@ -1,11 +1,32 @@
+@font-face {
+  font-family: titleFont;
+  src: url(Handel\ Gothic\ Regular.ttf);
+}
+header{
+    font-family: titleFont;
+}
+.navbar{
+    margin-bottom: 10px;
+}
 li.nav-item{
     display:inline;
 }
 ul.navbar-nav{
     display:inline;
 }
-
-.login-form {
+span.title { 
+    position: absolute;
+    width: 100%;
+    background: -webkit-linear-gradient(#343a40, #343a40);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    left: 0;
+    pointer-events: none;
+    font-size: 40px;
+    text-align: center;
+    font-family: titleFont;
+}
+.form {
     width: 350px;
     margin: 0 auto;
     background-color:  #c1d1f0;
@@ -13,22 +34,37 @@ ul.navbar-nav{
     padding: 8px;
     font-family: Tahoma, Geneva, sans-serif;
 }
-.login-form h1 {
+.form label.titleLabel{
+  float: left;
+  text-align: left;
+  margin-left: 5px ;
+  margin-top: 15px;
+}
+.form input.KeyInput{
+  width: 20%;
+  font-size: 12px;
+}
+.form h1 {
     text-align: center;
     color: #4d4d4d;
     font-size: 24px;
     padding: 20px 0 20px 0;
 }
-.login-form input[type="password"],
-.login-form input[type="text"] {
+.form ul li.colorItem{
+  width: 40%;
+  display: block;
+}
+.form input[type="password"],
+.form input[type="number"],
+.form input[type="text"] {
     width: 100%;
     padding: 15px;
     border: 1px solid #dddddd;
     margin-bottom: 15px;
     box-sizing:border-box;
 }
-.login-form input[type="button"],
-.login-form input[type="submit"] {
+.form input[type="button"],
+.form input[type="submit"] {
     padding: 15px;
     margin-top: 5px;
     background-color: #535b63;
@@ -44,112 +80,29 @@ ul.navbar-nav{
         text-align:center;
 }
 
-.register-form {
-    width: 350px;
-    margin: 0 auto;
-    background-color:  #c1d1f0;
-    border-radius: 5px;
-    padding: 8px;
-    font-family: Tahoma, Geneva, sans-serif;
+
+div#game{
+  text-align: center;
+  width: 100%;
 }
-.register-form h1 {
-    text-align: center;
-    color: #4d4d4d;
-    font-size: 24px;
-    padding: 20px 0 20px 0;
-}
-.register-form input[type="password"],
-.register-form input[type="text"] {
-    width: 100%;
-    padding: 15px;
-    border: 1px solid #dddddd;
-    margin-bottom: 15px;
-    box-sizing:border-box;
-}
-.register-form input[type="button"],
-.register-form input[type="submit"] {
-    width: 45%;
-    padding: 15px;
-    margin-top: 5px;
-    background-color: #535b63;
-    border: 0;
-    border-radius: 20px;
-    box-sizing: border-box;
-    cursor: pointer;
-    font-weight: bold;
-    color: #ffffff;
-}
+
+div#Settings{
+    margin-left: 20px;
+    float: left;
+  }
 
 div#Welcome{
     text-align: center;
 }
 
-header{
-        text-align: center;
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
 }
 
-/* Test */
-/* img{
-      animation: glitch1 2.5s infinite;
-
-}
-
-@keyframes glitch1 {
-  0% {
-    transform: none;
-    opacity: 1;
-  }
-  7% {
-    transform: skew(-0.5deg, -0.9deg);
-    opacity: 0.75;
-  }
-  10% {
-    transform: none;
-    opacity: 1;
-  }
-  27% {
-    transform: none;
-    opacity: 1;
-  }
-  30% {
-    transform: skew(0.8deg, -0.1deg);
-    opacity: 0.75;
-  }
-  35% {
-    transform: none;
-    opacity: 1;
-  }
-  52% {
-    transform: none;
-    opacity: 1;
-  }
-  55% {
-    transform: skew(-1deg, 0.2deg);
-    opacity: 0.75;
-  }
-  50% {
-    transform: none;
-    opacity: 1;
-  }
-  72% {
-    transform: none;
-    opacity: 1;
-  }
-  75% {
-    transform: skew(0.4deg, 1deg);
-    opacity: 0.75;
-  }
-  80% {
-    transform: none;
-    opacity: 1;
-  }
-  100% {
-    transform: none;
-    opacity: 1;
-  }
-} */
-
-/* test 2 */
 
 #images{
     height: child;
