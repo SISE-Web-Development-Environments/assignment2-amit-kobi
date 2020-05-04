@@ -37,7 +37,7 @@ $(document).ready(function () {
 });
 
 function setParameters(_controlKeys, _numberOfBalls, _ballsColors, _totalGameTime, _numberOfGhosts) {
-
+	
 }
 
 function Start() {
@@ -48,6 +48,7 @@ function Start() {
 	pac_color = "yellow";
 	ghostsPositions = [[0, 0], [0, 9], [9, 0], [9, 9]];
 	isGhostDead = [false, false, false, false];
+	atePrincessPeach = false;
 	var cnt = 100;
 	var food_remain = 50;
 	var pacman_remain = 1;
@@ -105,6 +106,7 @@ function Start() {
 		},
 		false
 	);
+	window.clearInterval();
 	interval = setInterval(UpdatePosition, 150);
 	console.log(interval);
 }
