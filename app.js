@@ -207,11 +207,11 @@ function Start() {
 }
 
 function findRandomEmptyCell(board) {
-	var i = Math.floor(Math.random() * row + 1);
-	var j = Math.floor(Math.random() * col + 1);
+	var i = Math.floor(Math.random() * row);
+	var j = Math.floor(Math.random() * col);
 	while (board[i][j] != 0) {
-		i = Math.floor(Math.random() * row + 1);
-		j = Math.floor(Math.random() * col + 1);
+		i = Math.floor(Math.random() * row);
+		j = Math.floor(Math.random() * col);
 	}
 	return [i, j];
 }
@@ -672,8 +672,4 @@ function getRandomColor() {
 		color += letters[Math.floor(Math.random() * 16)];
 	}
 	return color;
-}
-
-function getBallColor(i, j){
-	
 }
