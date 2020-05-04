@@ -13,8 +13,7 @@ var row = 20;
 var col = 20;
 var canvasHeight;
 var canvasWidth;
-
-
+var boardBallsColors;
 // Ghosts
 var ghostsPositions;
 var ghostsColors = ["Red", "#0D0", "Blue", "Cyan"];
@@ -27,15 +26,15 @@ var power = false;
 var powerTimer;
 
 // Special character
-var princessPeachPosition = null;
-var atePrincessPeach = false;
+var princessPeachPosition;
+var atePrincessPeach;
 
 // Settings
-var controlKeys = [38, 40, 37, 39];
-var numberOfBalls = 50;
-var ballsColors = ['copper', 'silver', 'yellow'];
-var totalGameTime = 60;
-var numberOfGhosts = 1;
+var controlKeys;
+var numberOfBalls;
+var ballsColors;
+var totalGameTime;
+var numberOfGhosts;
 
 $(document).ready(function () {
 	context = canvas.getContext("2d");
@@ -60,36 +59,117 @@ function Start() {
 	score = 0;
 	lives = 5;
 	pac_color = "yellow";
-	ghostsPositions = [[0, 0], [0, 9], [9, 0], [9, 9]];
+	ghostsPositions = [[0, 0], [0, col - 1], [row - 1, 0], [row - 1, col - 1]];
 	isGhostDead = [false, false, false, false];
+	for (let index = 0; index < 4; index++) {
+		if (index > numberOfGhosts) {
+			isGhostDead[index] = true;
+		}
+	}
 	atePrincessPeach = false;
+	boardBallsColors = {};
 	var cnt = row * col; // changed to fit different sizes map
-	var food_remain = 50;
-	var pacman_remain = 1;
+	var food_remain = numberOfBalls;
 	start_time = new Date();
 	for (var i = 0; i < row; i++) {
 		board[i] = new Array();
 		//put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
 		for (var j = 0; j < col; j++) {
 			if (
-				(i == 3 && j == 3) ||
-				(i == 3 && j == 4) ||
-				(i == 3 && j == 5) ||
-				(i == 6 && j == 1) ||
-				(i == 6 && j == 2)
+				(i == 2 && j == 2) ||
+				(i == 2 && j == 3) ||
+				(i == 2 && j == 4) ||
+				(i == 3 && j == 2) ||
+				(i == 4 && j == 2) ||
+
+				(i == 2 && j == col - 1 - 2) ||
+				(i == 2 && j == col - 1 - 3) ||
+				(i == 2 && j == col - 1 - 4) ||
+				(i == 3 && j == col - 1 - 2) ||
+				(i == 4 && j == col - 1 - 2) ||
+
+				(i == row - 1 - 2 && j == 2) ||
+				(i == row - 1 - 2 && j == 3) ||
+				(i == row - 1 - 2 && j == 4) ||
+				(i == row - 1 - 3 && j == 2) ||
+				(i == row - 1 - 4 && j == 2) ||
+
+				(i == row - 1 - 2 && j == col - 1 - 2) ||
+				(i == row - 1 - 2 && j == col - 1 - 3) ||
+				(i == row - 1 - 2 && j == col - 1 - 4) ||
+				(i == row - 1 - 3 && j == col - 1 - 2) ||
+				(i == row - 1 - 4 && j == col - 1 - 2) ||
+
+				(i == row / 2 - 3 && j == 2) ||
+				(i == row / 2 - 2 && j == 2) ||
+				(i == row / 2 - 1 && j == 2) ||
+				(i == row / 2 - 0 && j == 2) ||
+				(i == row / 2 + 1 && j == 2) ||
+				(i == row / 2 + 2 && j == 2) ||
+
+				(i == 2 && j == col / 2 - 3) ||
+				(i == 2 && j == col / 2 - 2) ||
+				(i == 2 && j == col / 2 - 1) ||
+				(i == 2 && j == col / 2 - 0) ||
+				(i == 2 && j == col / 2 + 1) ||
+				(i == 2 && j == col / 2 + 2) ||
+
+				(i == row - 1 - 2 && j == col / 2 - 3) ||
+				(i == row - 1 - 2 && j == col / 2 - 2) ||
+				(i == row - 1 - 2 && j == col / 2 - 1) ||
+				(i == row - 1 - 2 && j == col / 2 - 0) ||
+				(i == row - 1 - 2 && j == col / 2 + 1) ||
+				(i == row - 1 - 2 && j == col / 2 + 2) ||
+
+				(i == row / 2 - 3 && j == col - 1 - 2) ||
+				(i == row / 2 - 2 && j == col - 1 - 2) ||
+				(i == row / 2 - 1 && j == col - 1 - 2) ||
+				(i == row / 2 - 0 && j == col - 1 - 2) ||
+				(i == row / 2 + 1 && j == col - 1 - 2) ||
+				(i == row / 2 + 2 && j == col - 1 - 2) ||
+
+				(i == row / 2 - 3 && j == col / 2 - 0) ||
+				(i == row / 2 - 2 && j == col / 2 - 0) ||
+				(i == row / 2 - 1 && j == col / 2 - 0) ||
+				(i == row / 2 - 0 && j == col / 2 - 0) ||
+				(i == row / 2 + 1 && j == col / 2 - 0) ||
+				(i == row / 2 + 2 && j == col / 2 - 0) ||
+
+				(i == row / 2 - 3 && j == col / 2 - 1) ||
+				(i == row / 2 - 2 && j == col / 2 - 1) ||
+				(i == row / 2 - 1 && j == col / 2 - 1) ||
+				(i == row / 2 - 0 && j == col / 2 - 1) ||
+				(i == row / 2 + 1 && j == col / 2 - 1) ||
+				(i == row / 2 + 2 && j == col / 2 - 1) ||
+
+				(i == row / 2 - 0 && j == col / 2 - 3) ||
+				(i == row / 2 - 0 && j == col / 2 - 2) ||
+				(i == row / 2 - 0 && j == col / 2 - 1) ||
+				(i == row / 2 - 0 && j == col / 2 - 0) ||
+				(i == row / 2 - 0 && j == col / 2 + 1) ||
+				(i == row / 2 - 0 && j == col / 2 + 2) ||
+
+				(i == row / 2 - 1 && j == col / 2 - 3) ||
+				(i == row / 2 - 1 && j == col / 2 - 2) ||
+				(i == row / 2 - 1 && j == col / 2 - 1) ||
+				(i == row / 2 - 1 && j == col / 2 - 0) ||
+				(i == row / 2 - 1 && j == col / 2 + 1) ||
+				(i == row / 2 - 1 && j == col / 2 + 2)
+
 			) {
 				board[i][j] = 4;
 			} else {
 				var randomNum = Math.random();
-				if (pacman_remain == 1 && randomNum < (1.0 * (pacman_remain + food_remain)) / cnt && i <= 7 && i >= 3 && j <= 7 && j >= 3)  {
-					console.log("done");
-					shape.i = i;
-					shape.j = j;
-					pacman_remain--;
-					board[i][j] = 2;
-					pacmanPosition = [i, j];
-				} else if (randomNum <= (1.0 * food_remain) / cnt) {
+				if (randomNum <= (1.0 * food_remain) / cnt) {
 					food_remain--;
+					let rand = Math.random();
+					if (rand < 0.60) {
+						boardBallsColors[`${i},${j}`] = ballsColors[0];
+					} else if (rand >= 0.60 && rand < 0.90) {
+						boardBallsColors[`${i},${j}`] = ballsColors[1];
+					} else {
+						boardBallsColors[`${i},${j}`] = ballsColors[2];
+					}
 					board[i][j] = 1;
 				} else {
 					board[i][j] = 0;
@@ -98,6 +178,7 @@ function Start() {
 			}
 		}
 	}
+	resetPacmanPosition();
 	while (food_remain > 0) {
 		var emptyCell = findRandomEmptyCell(board);
 		board[emptyCell[0]][emptyCell[1]] = 1;
@@ -126,26 +207,26 @@ function Start() {
 }
 
 function findRandomEmptyCell(board) {
-	var i = Math.floor(Math.random() * 9 + 1);
-	var j = Math.floor(Math.random() * 9 + 1);
+	var i = Math.floor(Math.random() * row + 1);
+	var j = Math.floor(Math.random() * col + 1);
 	while (board[i][j] != 0) {
-		i = Math.floor(Math.random() * 9 + 1);
-		j = Math.floor(Math.random() * 9 + 1);
+		i = Math.floor(Math.random() * row + 1);
+		j = Math.floor(Math.random() * col + 1);
 	}
 	return [i, j];
 }
 
 function GetKeyPressed() {
-	if (keysDown[38]) {
+	if (keysDown[controlKeys[0]]) {
 		return 1;
 	}
-	if (keysDown[40]) {
+	if (keysDown[controlKeys[1]]) {
 		return 2;
 	}
-	if (keysDown[37]) {
+	if (keysDown[controlKeys[2]]) {
 		return 3;
 	}
-	if (keysDown[39]) {
+	if (keysDown[controlKeys[3]]) {
 		return 4;
 	}
 }
@@ -169,7 +250,7 @@ function Draw() {
 			} else if (board[i][j] == 1) {
 				context.beginPath();
 				context.arc(center.x, center.y, (sizeX / 4), 0, 2 * Math.PI); // circle
-				context.fillStyle = "black"; //color
+				context.fillStyle = boardBallsColors[`${i},${j}`]; //color
 				context.fill();
 			} else if (board[i][j] == 4) { // Wall
 				context.beginPath();
@@ -268,7 +349,13 @@ function UpdatePosition() {
 	}
 	ghostsCounter++;
 	if (board[shape.i][shape.j] == 1) {
-		score++;
+		if (boardBallsColors[`${shape.i},${shape.j}`] == ballsColors[0]) {
+			score += 5;
+		} else if (boardBallsColors[`${shape.i},${shape.j}`] == ballsColors[1]) {
+			score += 15;
+		} else {
+			score += 25;
+		}
 	}
 	if (getGhostId(shape.i, shape.j) != -1 && !isGhostDead[getGhostId(shape.i, shape.j)]) {
 		if (power) {
@@ -276,11 +363,16 @@ function UpdatePosition() {
 			removeGhost(shape.i, shape.j);
 		} else {
 			lives--;
-			score -= 10;
-			window.clearInterval(interval);
+			if (lives == 0) {
+				window.alert("You died! No more lives");
+				window.clearInterval();
+			} else {
+				score -= 10;
+			// window.clearInterval(interval);
 			window.alert("You died!");
-			ghostsPositions = [[0, 0], [0, 9], [9, 0], [9, 9]];
+			ghostsPositions = [[0, 0], [0, col - 1], [row - 1, 0], [row - 1, col - 1]];
 			resetPacmanPosition();
+			}
 		}
 	}
 	if (board[shape.i][shape.j] == 5) {
@@ -353,45 +445,45 @@ function drawGhost(i, j) {
 	coordinates.y = j * sizeY + (sizeY / 2);
 
 	context.beginPath();
-	context.arc(coordinates.x, coordinates.y, 15, 0, Math.PI, true);
+	context.arc(coordinates.x, coordinates.y, sizeX / 4, 0, Math.PI, true);
 	context.fillStyle = color;
 	context.fill();
 
 	context.beginPath();
-	context.rect(coordinates.x - 15, coordinates.y, 30, 15);
+	context.rect(coordinates.x - sizeX / 4, coordinates.y, sizeX / 2, sizeX / 4);
 	context.fillStyle = color;
 	context.fill();
 
 	context.beginPath();
-	context.moveTo(coordinates.x - 15, coordinates.y + 15);
-	context.lineTo(coordinates.x - 15, coordinates.y + 20);
-	context.lineTo(coordinates.x - 10, coordinates.y + 15);
-	context.lineTo(coordinates.x - 5, coordinates.y + 20);
-	context.lineTo(coordinates.x, coordinates.y + 15);
-	context.lineTo(coordinates.x + 5, coordinates.y + 20);
-	context.lineTo(coordinates.x + 10, coordinates.y + 15);
-	context.lineTo(coordinates.x + 15, coordinates.y + 20);
-	context.lineTo(coordinates.x + 15, coordinates.y + 15);
+	context.moveTo(coordinates.x - sizeX / 4, coordinates.y + sizeY / 4);
+	context.lineTo(coordinates.x - sizeX / 4, coordinates.y + sizeY / 3);
+	context.lineTo(coordinates.x - sizeX / 6, coordinates.y + sizeY / 4);
+	context.lineTo(coordinates.x - sizeX / 12, coordinates.y + sizeY / 3);
+	context.lineTo(coordinates.x, coordinates.y + sizeY / 4);
+	context.lineTo(coordinates.x + sizeX / 12, coordinates.y + sizeY / 3);
+	context.lineTo(coordinates.x + sizeX / 6, coordinates.y + sizeY / 4);
+	context.lineTo(coordinates.x + sizeX / 4, coordinates.y + sizeY / 3);
+	context.lineTo(coordinates.x + sizeX / 4, coordinates.y + sizeY / 4);
 	context.fillStyle = color;
 	context.fill();
 
 	context.beginPath();
-	context.arc(coordinates.x - 7.5, coordinates.y, 5, 0, 2 * Math.PI, true);
+	context.arc(coordinates.x - sizeX / 8, coordinates.y, sizeX / 12, 0, 2 * Math.PI, true);
 	context.fillStyle = "white";
 	context.fill();
 
 	context.beginPath();
-	context.arc(coordinates.x + 7.5, coordinates.y, 5, 0, 2 * Math.PI, true);
+	context.arc(coordinates.x + sizeX / 8, coordinates.y, sizeX / 12, 0, 2 * Math.PI, true);
 	context.fillStyle = "white";
 	context.fill();
 
 	context.beginPath();
-	context.arc(coordinates.x - 7.5, coordinates.y, 2.5, 0, 2 * Math.PI, true);
+	context.arc(coordinates.x - sizeX / 8, coordinates.y, sizeX / 24, 0, 2 * Math.PI, true);
 	context.fillStyle = "black";
 	context.fill();
 
 	context.beginPath();
-	context.arc(coordinates.x + 7.5, coordinates.y, 2.5, 0, 2 * Math.PI, true);
+	context.arc(coordinates.x + sizeX / 8, coordinates.y, sizeX / 24, 0, 2 * Math.PI, true);
 	context.fillStyle = "black";
 	context.fill();
 }
@@ -443,11 +535,13 @@ function removeGhost(i, j) {
 }
 
 function clearGhostPosition(i, j) {
-	x = i * 60 + 30;
-	y = j * 60 + 30;
+	let sizeX = (canvasWidth / row);
+	let sizeY = (canvasHeight / col);
+	x = i * sizeX + sizeX / 2;
+	y = j * sizeY + sizeY / 2;
 
 	context.beginPath();
-	context.rect(x - 15, y - 15, 30, 50);
+	context.rect(x - sizeX / 4, y - sizeY / 4, sizex / 2, sizeY);
 	context.fillStyle = "white";
 	context.fill();
 }
@@ -474,7 +568,7 @@ function addClock() {
 
 function resetPacmanPosition() {
 	let position = findRandomEmptyCell(board);
-	while(!(position[0] <= 7 && position[0] >= 3 && position[1] <= 7 && position[1] >= 3)){
+	while(!(position[0] <= row - 3 && position[0] >= 3 && position[1] <= col - 3 && position[1] >= 3)){
 		position = findRandomEmptyCell(board);
 	}
 	shape.i = position[0];
@@ -483,7 +577,7 @@ function resetPacmanPosition() {
 
 function setPrincessPeachPosition() {
 	if (isGhostDead[3]){
-		princessPeachPosition = [9,9];
+		princessPeachPosition = [row - 1, col - 1];
 	} else {
 		princessPeachPosition = findRandomEmptyCell(board);
 	}
@@ -500,7 +594,7 @@ function movePrincessPeach() {
 		while (!moved) {
 			let random = Math.floor(Math.random() * 4 + 1);
 			if (random == 1) { // Right
-				if (princessPeachPosition[0] + 1 > 9 || board[princessPeachPosition[0] + 1][princessPeachPosition[1]] == 4) {
+				if (princessPeachPosition[0] + 1 > row - 1 || board[princessPeachPosition[0] + 1][princessPeachPosition[1]] == 4) {
 					continue;
 				}
 				princessPeachPosition[0]++;
@@ -518,7 +612,7 @@ function movePrincessPeach() {
 				princessPeachPosition[1]--;
 				moved = true;
 			} else { // Down
-				if (princessPeachPosition[1] + 1 > 9 || board[princessPeachPosition[0]][princessPeachPosition[1] + 1] == 4) {
+				if (princessPeachPosition[1] + 1 > col - 1 || board[princessPeachPosition[0]][princessPeachPosition[1] + 1] == 4) {
 					continue;
 				}
 				princessPeachPosition[1]++;
@@ -545,30 +639,32 @@ function setSettings(){
 	_controlKeys = [up,down,left,right];
 	console.log(up);
 	var _numberOfBalls = parseInt(document.getElementById("ballCount").value);
-	if (_numberOfBalls == NaN || _numberOfBalls > 90 || _numberOfBalls < 50){
+	if (_numberOfBalls == NaN || _numberOfBalls > 90 || _numberOfBalls < 50) {
 		alert("Number of balls must be between 50 to 90");
-	}else{
-	var color1 = document.getElementById("color1").value;
-	var color2 = document.getElementById("color2").value;
-	var color3 = document.getElementById("color3").value;
-	_ballsColors =[color1,color2,color3];
-		_totalGameTime = parseInt(document.getElementById("totalTime").value);
-	if(_totalGameTime == NaN || _totalGameTime < 60){
-		alert("total game time must be atleast 60 seconds");
-	}else{
-		_numberOfGhosts = parseInt(document.getElementById("mobCount").value);
-		if (_numberOfGhosts > 4 || _numberOfGhosts < 1 || _numberOfGhosts == NaN){
-			alert("Must be between 1 to 4 ghosts");
+	} else {
+		var color1 = document.getElementById("color1").value;
+		var color2 = document.getElementById("color2").value;
+		var color3 = document.getElementById("color3").value;
+		_ballsColors =[color1,color2,color3];
+			_totalGameTime = parseInt(document.getElementById("totalTime").value);
+		if(_totalGameTime == NaN || _totalGameTime < 60){
+			alert("total game time must be atleast 60 seconds");
 		}else{
-			setParameters(_controlKeys,_numberOfBalls,_ballsColors,_totalGameTime,_numberOfGhosts);
+			_numberOfGhosts = parseInt(document.getElementById("mobCount").value);
+			if (_numberOfGhosts > 4 || _numberOfGhosts < 1 || _numberOfGhosts == NaN){
+				alert("Must be between 1 to 4 ghosts");
+			}else{
+				setParameters(_controlKeys,_numberOfBalls,_ballsColors,_totalGameTime,_numberOfGhosts);
+			}
 		}
 	}
 }
-}
+
 // euqal or higher then min and lower not equal to max
 function getRandomArbitrary(min, max) {
 	return Math.floor(Math.random() * (max - min) + min);
 }
+
 function getRandomColor() {
 	var letters = '0123456789ABCDEF';
 	var color = '#';
@@ -576,4 +672,8 @@ function getRandomColor() {
 		color += letters[Math.floor(Math.random() * 16)];
 	}
 	return color;
+}
+
+function getBallColor(i, j){
+	
 }
