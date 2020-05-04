@@ -543,8 +543,9 @@ function setSettings(){
 	var left = parseInt(document.getElementById("leftKey").value);
 	var right = parseInt(document.getElementById("rightKey").value);
 	_controlKeys = [up,down,left,right];
+	console.log(up);
 	var _numberOfBalls = parseInt(document.getElementById("ballCount").value);
-	if(_numberOfBalls > 90 || _numberOfBalls < 50){
+	if (_numberOfBalls == NaN || _numberOfBalls > 90 || _numberOfBalls < 50){
 		alert("Number of balls must be between 50 to 90");
 	}else{
 	var color1 = document.getElementById("color1").value;
@@ -552,11 +553,11 @@ function setSettings(){
 	var color3 = document.getElementById("color3").value;
 	_ballsColors =[color1,color2,color3];
 		_totalGameTime = parseInt(document.getElementById("totalTime").value);
-	if(_totalGameTime < 60){
+	if(_totalGameTime == NaN || _totalGameTime < 60){
 		alert("total game time must be atleast 60 seconds");
 	}else{
 		_numberOfGhosts = parseInt(document.getElementById("mobCount").value);
-		if(_numberOfGhosts > 4 || _numberOfGhosts < 1){
+		if (_numberOfGhosts > 4 || _numberOfGhosts < 1 || _numberOfGhosts == NaN){
 			alert("Must be between 1 to 4 ghosts");
 		}else{
 			setParameters(_controlKeys,_numberOfBalls,_ballsColors,_totalGameTime,_numberOfGhosts);
