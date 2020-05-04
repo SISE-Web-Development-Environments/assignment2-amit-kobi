@@ -9,6 +9,11 @@ var time_elapsed;
 var interval;
 var direction;
 var pacmanPosition;
+var row = 20;
+var col = 20;
+var canvasHeight;
+var canvasWidth;
+
 
 // Ghosts
 var ghostsPositions;
@@ -34,10 +39,19 @@ var numberOfGhosts = 1;
 
 $(document).ready(function () {
 	context = canvas.getContext("2d");
+	canvasHeight = canvas.height;
+	canvasWidth = canvas.width;
 });
 
 function setParameters(_controlKeys, _numberOfBalls, _ballsColors, _totalGameTime, _numberOfGhosts) {
-	
+	console.log(_controlKeys, _numberOfBalls, _ballsColors, _totalGameTime, _numberOfGhosts);
+	controlKeys = _controlKeys;
+	numberOfBalls = _numberOfBalls;
+	ballsColors = _ballsColors;
+	totalGameTime = _totalGameTime;
+	numberOfGhosts = _numberOfGhosts;
+	window.clearInterval(interval);
+	Start();
 }
 
 function Start() {
@@ -49,14 +63,14 @@ function Start() {
 	ghostsPositions = [[0, 0], [0, 9], [9, 0], [9, 9]];
 	isGhostDead = [false, false, false, false];
 	atePrincessPeach = false;
-	var cnt = 100;
+	var cnt = row * col; // changed to fit different sizes map
 	var food_remain = 50;
 	var pacman_remain = 1;
 	start_time = new Date();
-	for (var i = 0; i < 10; i++) {
+	for (var i = 0; i < row; i++) {
 		board[i] = new Array();
 		//put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
-		for (var j = 0; j < 10; j++) {
+		for (var j = 0; j < col; j++) {
 			if (
 				(i == 3 && j == 3) ||
 				(i == 3 && j == 4) ||
@@ -67,15 +81,16 @@ function Start() {
 				board[i][j] = 4;
 			} else {
 				var randomNum = Math.random();
-				if (randomNum <= (1.0 * food_remain) / cnt) {
-					food_remain--;
-					board[i][j] = 1;
-				} else if (randomNum < (1.0 * (pacman_remain + food_remain)) / cnt && i <= 7 && i >= 3 && j <= 7 && j >= 3) {
+				if (pacman_remain == 1 && randomNum < (1.0 * (pacman_remain + food_remain)) / cnt && i <= 7 && i >= 3 && j <= 7 && j >= 3)  {
+					console.log("done");
 					shape.i = i;
 					shape.j = j;
 					pacman_remain--;
 					board[i][j] = 2;
 					pacmanPosition = [i, j];
+				} else if (randomNum <= (1.0 * food_remain) / cnt) {
+					food_remain--;
+					board[i][j] = 1;
 				} else {
 					board[i][j] = 0;
 				}
@@ -108,7 +123,6 @@ function Start() {
 	);
 	window.clearInterval();
 	interval = setInterval(UpdatePosition, 150);
-	console.log(interval);
 }
 
 function findRandomEmptyCell(board) {
@@ -142,79 +156,81 @@ function Draw() {
 	lblLives.value = lives;
 	let addTime = ateClock ? 5 : 0;
 	lblTime.value = Math.floor(totalGameTime - time_elapsed + addTime);
-	for (var i = 0; i < 10; i++) {
-		for (var j = 0; j < 10; j++) {
+	var sizeX = (canvasWidth / row);
+	var sizeY = (canvasHeight / col);
+	for (var i = 0; i < row; i++) {
+		for (var j = 0; j < col; j++) {
 			var center = new Object();
-			center.x = i * 60 + 30;
-			center.y = j * 60 + 30;
+			center.x = i * sizeX + (sizeX / 2);
+			center.y = j * sizeY + (sizeY / 2);
 			if (board[i][j] == 2) { // Pacman
-				DrawPacMan(center);
-				DrawEye(center);
+				DrawPacMan(center,sizeX / 2);
+				DrawEye(center,(sizeX / 12));
 			} else if (board[i][j] == 1) {
 				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
+				context.arc(center.x, center.y, (sizeX / 4), 0, 2 * Math.PI); // circle
 				context.fillStyle = "black"; //color
 				context.fill();
 			} else if (board[i][j] == 4) { // Wall
 				context.beginPath();
-				context.rect(center.x - 30, center.y - 30, 60, 60);
+				context.rect(center.x - (sizeX / 2), center.y - (sizeY / 2), sizeX, sizeY);
 				context.fillStyle = "grey"; //color
 				context.fill();
 			} else if (board[i][j] == 5) { // Life pill
 				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, Math.PI);
+				context.arc(center.x, center.y, (sizeX / 4), 0, Math.PI);
 				context.fillStyle = "red";
 				context.fill();
 				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, Math.PI, true);
+				context.arc(center.x, center.y, (sizeX / 4), 0, Math.PI, true);
 				context.fillStyle = "blue";
 				context.fill();
 			} else if (board[i][j] == 6) { // Power pill
 				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, Math.PI);
+				context.arc(center.x, center.y, (sizeX / 4), 0, Math.PI);
 				context.fillStyle = "blue";
 				context.fill();
 				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, Math.PI, true);
+				context.arc(center.x, center.y, (sizeX / 4), 0, Math.PI, true);
 				context.fillStyle = "green";
 				context.fill();
 			} else if (board[i][j] == 7) { // Clock
 				let clockImage = document.getElementById("clock");
-				context.drawImage(clockImage, center.x - 30, center.y - 30, 60, 60);
+				context.drawImage(clockImage, center.x - (sizeX / 2), center.y - (sizeY / 2), sizeX, sizeY);
 			}
 		}
 	}
 	drawGhosts();
 	if (!atePrincessPeach) {
-		drawPrincessPeach();
+		drawPrincessPeach(sizeX,sizeY);
 	}
 }
 
-function DrawPacMan(center) {
+function DrawPacMan(center,size) {
 	context.beginPath();
 	if (direction == 'right')
-		context.arc(center.x, center.y, 30, 0.15 * Math.PI, 1.85 * Math.PI); // half circle
+		context.arc(center.x, center.y, size, 0.15 * Math.PI, 1.85 * Math.PI); // half circle
 	if (direction == 'left')
-		context.arc(center.x, center.y, 30, (0.15 + 1) * Math.PI, (1.85 + 1) * Math.PI); // half circle
+		context.arc(center.x, center.y, size, (0.15 + 1) * Math.PI, (1.85 + 1) * Math.PI); // half circle
 	if (direction == 'down')
-		context.arc(center.x, center.y, 30, (0.15 + 0.5) * Math.PI, (1.85 + 0.5) * Math.PI); // half circle
+		context.arc(center.x, center.y, size, (0.15 + 0.5) * Math.PI, (1.85 + 0.5) * Math.PI); // half circle
 	if (direction == 'up')
-		context.arc(center.x, center.y, 30, (0.15 - 0.5) * Math.PI, (1.85 - 0.5) * Math.PI); // half circle
+		context.arc(center.x, center.y, size, (0.15 - 0.5) * Math.PI, (1.85 - 0.5) * Math.PI); // half circle
 	context.lineTo(center.x, center.y);
 	context.fillStyle = pac_color; //color
 	context.fill();
 }
 
-function DrawEye(center) {
+function DrawEye(center,size) {
 	context.beginPath();
 	if (direction == 'right')
-		context.arc(center.x + 5, center.y - 15, 5, 0, 2 * Math.PI); // circle
+		context.arc(center.x + (size * 2), center.y - (size * 3), size, 0, 2 * Math.PI); // circle
 	if (direction == 'left')
-		context.arc(center.x - 5, center.y - 15, 5, 0, 2 * Math.PI); // circle
+		context.arc(center.x - (size * 2), center.y - (size * 3), size, 0, 2 * Math.PI); // circle
 	if (direction == 'down')
-		context.arc(center.x + 15, center.y, 5, 0, 2 * Math.PI); // circle
+		context.arc(center.x + (size * 3), center.y, size, 0, 2 * Math.PI); // circle
 	if (direction == 'up')
-		context.arc(center.x + 15, center.y, 5, 0, 2 * Math.PI); // circle
+		context.arc(center.x + (size * 3), center.y, size, 0, 2 * Math.PI); // circle
 	context.fillStyle = "black"; //color
 	context.fill();
 }
@@ -229,7 +245,7 @@ function UpdatePosition() {
 		}
 	}
 	if (x == 2) {
-		if (shape.j < 9 && board[shape.i][shape.j + 1] != 4) {
+		if (shape.j < col -1 && board[shape.i][shape.j + 1] != 4) {
 			direction = 'down';
 			shape.j++;
 		}
@@ -241,7 +257,7 @@ function UpdatePosition() {
 		}
 	}
 	if (x == 4) {
-		if (shape.i < 9 && board[shape.i + 1][shape.j] != 4) {
+		if (shape.i < row -1 && board[shape.i + 1][shape.j] != 4) {
 			direction = 'right';
 			shape.i++;
 		}
@@ -331,8 +347,10 @@ function drawGhost(i, j) {
 	let color = power ? "purple" : ghostsColors[id];
 
 	let coordinates = new Object();
-	coordinates.x = i * 60 + 30;
-	coordinates.y = j * 60 + 30;
+	var sizeX = (canvasWidth / row);
+	var sizeY = (canvasHeight / col);
+	coordinates.x = i * sizeX + (sizeX / 2);
+	coordinates.y = j * sizeY + (sizeY / 2);
 
 	context.beginPath();
 	context.arc(coordinates.x, coordinates.y, 15, 0, Math.PI, true);
@@ -392,11 +410,11 @@ function moveGhost(ghostID) {
 	let y = ghostsPositions[ghostID][1];
 	let distance = getDistanceFromPacman(x, y);
 	if (power) {
-		if (distance.x > 0 && x + 1 <= 9 && board[x + 1][y] != 4 && getGhostId(x + 1, y) == -1) {
+		if (distance.x > 0 && x + 1 <= (row - 1) && board[x + 1][y] != 4 && getGhostId(x + 1, y) == -1) {
 			ghostsPositions[ghostID][0]++;
 		} else if (distance.x < 0 && x - 1 >= 0 && board[x - 1][y] != 4 && getGhostId(x - 1, y) == -1) {
 			ghostsPositions[ghostID][0]--;
-		} else if (distance.y > 0 && y + 1 <= 9 && board[x][y + 1] != 4 && getGhostId(x, y + 1) == -1) {
+		} else if (distance.y > 0 && y + 1 <= (col - 1) && board[x][y + 1] != 4 && getGhostId(x, y + 1) == -1) {
 			ghostsPositions[ghostID][1]++;
 		} else if (distance.y < 0 && y - 1 >= 0 && board[x][y - 1] != 4 && getGhostId(x, y - 1) == -1) {
 			ghostsPositions[ghostID][1]--;
@@ -405,13 +423,13 @@ function moveGhost(ghostID) {
 		if (distance.x > 0 && x - 1 >= 0 && board[x - 1][y] != 4 && getGhostId(x - 1, y) == -1) {
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][0]--;
-		} else if (distance.x < 0 && x + 1 <= 9 && board[x + 1][y] != 4 && getGhostId(x + 1, y) == -1) {
+		} else if (distance.x < 0 && x + 1 <= (row - 1) && board[x + 1][y] != 4 && getGhostId(x + 1, y) == -1) {
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][0]++;
 		} else if (distance.y > 0 && y - 1 >= 0 && board[x][y - 1] != 4 && getGhostId(x, y - 1) == -1) {
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][1]--;
-		} else if (distance.y < 0 && y + 1 <= 9 && board[x][y + 1] != 4 && getGhostId(x, y + 1) == -1) {
+		} else if (distance.y < 0 && y + 1 <= (col - 1) && board[x][y + 1] != 4 && getGhostId(x, y + 1) == -1) {
 			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][1]++;
 		}
@@ -471,9 +489,9 @@ function setPrincessPeachPosition() {
 	}
 }
 
-function drawPrincessPeach() {
+function drawPrincessPeach(sizeX,sizeY) {
 	let princessPeachImage = document.getElementById("princessPeach");
-	context.drawImage(princessPeachImage, princessPeachPosition[0] * 60, princessPeachPosition[1] * 60, 60, 60);
+	context.drawImage(princessPeachImage, princessPeachPosition[0] * sizeX , princessPeachPosition[1] * sizeY, sizeX, sizeY);
 }
 
 function movePrincessPeach() {
@@ -508,4 +526,53 @@ function movePrincessPeach() {
 			}
 		}
 	}
+}
+
+function randomSettings(){
+	_controlKeys = [38, 40, 37, 39];
+	_numberOfBalls = getRandomArbitrary(50,91);
+	_ballsColors = [getRandomColor(), getRandomColor(), getRandomColor()];
+	_totalGameTime = getRandomArbitrary(60,360);
+	_numberOfGhosts = getRandomArbitrary(1,5);
+	setParameters(_controlKeys, _numberOfBalls, _ballsColors, _totalGameTime, _numberOfGhosts);
+}
+
+function setSettings(){
+	var up = parseInt(document.getElementById("upKey").value);
+	var down = parseInt(document.getElementById("downKey").value);
+	var left = parseInt(document.getElementById("leftKey").value);
+	var right = parseInt(document.getElementById("rightKey").value);
+	_controlKeys = [up,down,left,right];
+	var _numberOfBalls = parseInt(document.getElementById("ballCount").value);
+	if(_numberOfBalls > 90 || _numberOfBalls < 50){
+		alert("Number of balls must be between 50 to 90");
+	}else{
+	var color1 = document.getElementById("color1").value;
+	var color2 = document.getElementById("color2").value;
+	var color3 = document.getElementById("color3").value;
+	_ballsColors =[color1,color2,color3];
+		_totalGameTime = parseInt(document.getElementById("totalTime").value);
+	if(_totalGameTime < 60){
+		alert("total game time must be atleast 60 seconds");
+	}else{
+		_numberOfGhosts = parseInt(document.getElementById("mobCount").value);
+		if(_numberOfGhosts > 4 || _numberOfGhosts < 1){
+			alert("Must be between 1 to 4 ghosts");
+		}else{
+			setParameters(_controlKeys,_numberOfBalls,_ballsColors,_totalGameTime,_numberOfGhosts);
+		}
+	}
+}
+}
+// euqal or higher then min and lower not equal to max
+function getRandomArbitrary(min, max) {
+	return Math.floor(Math.random() * (max - min) + min);
+}
+function getRandomColor() {
+	var letters = '0123456789ABCDEF';
+	var color = '#';
+	for (var i = 0; i < 6; i++) {
+		color += letters[Math.floor(Math.random() * 16)];
+	}
+	return color;
 }
