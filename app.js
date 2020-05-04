@@ -9,8 +9,8 @@ var time_elapsed;
 var interval;
 var direction;
 var pacmanPosition;
-var row = 12;
-var col = 12;
+var row = 20;
+var col = 20;
 var canvasHeight;
 var canvasWidth;
 
@@ -171,7 +171,7 @@ function Draw() {
 				context.fill();
 			} else if (board[i][j] == 4) { // Wall
 				context.beginPath();
-				context.rect(center.x - 30, center.y - 30, sizeX, sizeY);
+				context.rect(center.x - (sizeX / 2), center.y - (sizeY / 2), sizeX, sizeY);
 				context.fillStyle = "grey"; //color
 				context.fill();
 			} else if (board[i][j] == 5) { // Life pill
@@ -222,13 +222,13 @@ function DrawPacMan(center,size) {
 function DrawEye(center,size) {
 	context.beginPath();
 	if (direction == 'right')
-		context.arc(center.x + 5, center.y - 15, size, 0, 2 * Math.PI); // circle
+		context.arc(center.x + (size * 2), center.y - (size * 3), size, 0, 2 * Math.PI); // circle
 	if (direction == 'left')
-		context.arc(center.x - 5, center.y - 15, size, 0, 2 * Math.PI); // circle
+		context.arc(center.x - (size * 2), center.y - (size * 3), size, 0, 2 * Math.PI); // circle
 	if (direction == 'down')
-		context.arc(center.x + 15, center.y, size, 0, 2 * Math.PI); // circle
+		context.arc(center.x + (size * 3), center.y, size, 0, 2 * Math.PI); // circle
 	if (direction == 'up')
-		context.arc(center.x + 15, center.y, size, 0, 2 * Math.PI); // circle
+		context.arc(center.x + (size * 3), center.y, size, 0, 2 * Math.PI); // circle
 	context.fillStyle = "black"; //color
 	context.fill();
 }
