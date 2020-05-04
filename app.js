@@ -162,11 +162,11 @@ function Draw() {
 			center.x = i * sizeX + (sizeX / 2);
 			center.y = j * sizeY + (sizeY / 2);
 			if (board[i][j] == 2) { // Pacman
-				DrawPacMan(center);
-				DrawEye(center);
+				DrawPacMan(center,sizeX / 2);
+				DrawEye(center,(sizeX / 12));
 			} else if (board[i][j] == 1) {
 				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
+				context.arc(center.x, center.y, (sizeX / 4), 0, 2 * Math.PI); // circle
 				context.fillStyle = "black"; //color
 				context.fill();
 			} else if (board[i][j] == 4) { // Wall
@@ -176,25 +176,25 @@ function Draw() {
 				context.fill();
 			} else if (board[i][j] == 5) { // Life pill
 				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, Math.PI);
+				context.arc(center.x, center.y, (sizeX / 4), 0, Math.PI);
 				context.fillStyle = "red";
 				context.fill();
 				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, Math.PI, true);
+				context.arc(center.x, center.y, (sizeX / 4), 0, Math.PI, true);
 				context.fillStyle = "blue";
 				context.fill();
 			} else if (board[i][j] == 6) { // Power pill
 				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, Math.PI);
+				context.arc(center.x, center.y, (sizeX / 4), 0, Math.PI);
 				context.fillStyle = "blue";
 				context.fill();
 				context.beginPath();
-				context.arc(center.x, center.y, 15, 0, Math.PI, true);
+				context.arc(center.x, center.y, (sizeX / 4), 0, Math.PI, true);
 				context.fillStyle = "green";
 				context.fill();
 			} else if (board[i][j] == 7) { // Clock
 				let clockImage = document.getElementById("clock");
-				context.drawImage(clockImage, center.x - 30, center.y - 30, sizeX, sizeY);
+				context.drawImage(clockImage, center.x - (sizeX / 2), center.y - (sizeY / 2), sizeX, sizeY);
 			}
 		}
 	}
@@ -204,31 +204,31 @@ function Draw() {
 	}
 }
 
-function DrawPacMan(center) {
+function DrawPacMan(center,size) {
 	context.beginPath();
 	if (direction == 'right')
-		context.arc(center.x, center.y, 30, 0.15 * Math.PI, 1.85 * Math.PI); // half circle
+		context.arc(center.x, center.y, size, 0.15 * Math.PI, 1.85 * Math.PI); // half circle
 	if (direction == 'left')
-		context.arc(center.x, center.y, 30, (0.15 + 1) * Math.PI, (1.85 + 1) * Math.PI); // half circle
+		context.arc(center.x, center.y, size, (0.15 + 1) * Math.PI, (1.85 + 1) * Math.PI); // half circle
 	if (direction == 'down')
-		context.arc(center.x, center.y, 30, (0.15 + 0.5) * Math.PI, (1.85 + 0.5) * Math.PI); // half circle
+		context.arc(center.x, center.y, size, (0.15 + 0.5) * Math.PI, (1.85 + 0.5) * Math.PI); // half circle
 	if (direction == 'up')
-		context.arc(center.x, center.y, 30, (0.15 - 0.5) * Math.PI, (1.85 - 0.5) * Math.PI); // half circle
+		context.arc(center.x, center.y, size, (0.15 - 0.5) * Math.PI, (1.85 - 0.5) * Math.PI); // half circle
 	context.lineTo(center.x, center.y);
 	context.fillStyle = pac_color; //color
 	context.fill();
 }
 
-function DrawEye(center) {
+function DrawEye(center,size) {
 	context.beginPath();
 	if (direction == 'right')
-		context.arc(center.x + 5, center.y - 15, 5, 0, 2 * Math.PI); // circle
+		context.arc(center.x + 5, center.y - 15, size, 0, 2 * Math.PI); // circle
 	if (direction == 'left')
-		context.arc(center.x - 5, center.y - 15, 5, 0, 2 * Math.PI); // circle
+		context.arc(center.x - 5, center.y - 15, size, 0, 2 * Math.PI); // circle
 	if (direction == 'down')
-		context.arc(center.x + 15, center.y, 5, 0, 2 * Math.PI); // circle
+		context.arc(center.x + 15, center.y, size, 0, 2 * Math.PI); // circle
 	if (direction == 'up')
-		context.arc(center.x + 15, center.y, 5, 0, 2 * Math.PI); // circle
+		context.arc(center.x + 15, center.y, size, 0, 2 * Math.PI); // circle
 	context.fillStyle = "black"; //color
 	context.fill();
 }
