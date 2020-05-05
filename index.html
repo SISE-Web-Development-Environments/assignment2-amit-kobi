@@ -59,6 +59,10 @@
 						hide = $(this).text();
 					}
 				});
+				if (hide == "Game") {
+					console.log('stop game');
+					stopGame();
+				}
 					$(this).removeClass('btn-dark').addClass('btn-dark.active');
 					show = $(this).text();
 					$('body').find('> div').each(function (i,rowValue){
@@ -145,6 +149,10 @@
 					});
 				</script>
 			</div>
+			<div id="player" style="width: 30%;">
+				<label for="lblPlayer">Player:</label>
+				<label id="lblPlayer"></label>
+			</div>
 			<div id="score" style="width: 30%;">
 				<label for="lblScore">SCORE:</label>
 				<input id="lblScore" type="text" />
@@ -199,6 +207,7 @@
 						var password = $('#loginPassword').val();
 						if (localStorage.getItem(username) == password) {
 							$("#welcomeLabel").html('Welcome back ' + username + '!');
+							$("#lblPlayer").html(username);
 							setPage('Login','Game');
 							successfulLogin();
 						} else {

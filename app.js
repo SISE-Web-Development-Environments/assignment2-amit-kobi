@@ -58,7 +58,15 @@ function setParameters(_controlKeys, _numberOfBalls, _ballsColors, _totalGameTim
 	window.clearInterval(interval);
 	Start();
 }
-
+function stopGame() {
+	window.clearInterval(interval);
+	music.pause();
+	music.currentTime = 0;
+	document.getElementById("lblScore").value = '';
+	document.getElementById("lblLives").value = '';
+	document.getElementById("lblTime").value = '';
+	context.clearRect(0, 0, canvas.width, canvas.height);
+}
 function Start() {
 	board = new Array();
 	direction = 'right';
@@ -186,6 +194,7 @@ function Start() {
 		music.play();
 		isMusicPaused = false;
 	}
+
 	resetPacmanPosition();
 	while (food_remain > 0) {
 		var emptyCell = findRandomEmptyCell(board);
