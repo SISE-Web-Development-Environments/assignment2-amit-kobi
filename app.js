@@ -14,6 +14,8 @@ var col = 20;
 var canvasHeight;
 var canvasWidth;
 var boardBallsColors;
+var eatenBalls;
+
 // Ghosts
 var ghostsPositions;
 var ghostsColors = ["Red", "#0D0", "Blue", "Cyan"];
@@ -84,6 +86,7 @@ function Start() {
 	boardBallsColors = {};
 	var cnt = row * col; // changed to fit different sizes map
 	var food_remain = numberOfBalls;
+	eatenBalls = 0;
 	start_time = new Date();
 	for (var i = 0; i < row; i++) {
 		board[i] = new Array();
@@ -381,6 +384,7 @@ function UpdatePosition() {
 		} else {
 			score += 25;
 		}
+		eatenBalls++;
 	}
 	if (getGhostId(shape.i, shape.j) != -1 && !isGhostDead[getGhostId(shape.i, shape.j)]) {
 		if (power) {
@@ -429,7 +433,7 @@ function UpdatePosition() {
 	}
 	lblScore.value = score;
 	let addTime = ateClock ? 5 : 0;
-	if (Math.floor(totalGameTime - time_elapsed + addTime) == 0) {
+	if (Math.floor(totalGameTime - time_elapsed + addTime) == 0 || numberOfBalls - eatenBalls == 0) {
 		window.clearInterval(interval);
 		if (score >= 100) {
 			window.alert("Winner!!!");
