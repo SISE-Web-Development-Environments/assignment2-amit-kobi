@@ -28,6 +28,7 @@ var powerTimer;
 // Special character
 var princessPeachPosition;
 var atePrincessPeach;
+var princessNextPosition;
 
 // Settings
 var controlKeys;
@@ -38,6 +39,7 @@ var numberOfGhosts;
 
 // sound
 var music;
+var isMusicPaused = true;
 
 $(document).ready(function () {
 	context = canvas.getContext("2d");
@@ -66,7 +68,7 @@ function Start() {
 	ghostsPositions = [[0, 0], [0, col - 1], [row - 1, 0], [row - 1, col - 1]];
 	isGhostDead = [false, false, false, false];
 	for (let index = 0; index < 4; index++) {
-		if (index > numberOfGhosts) {
+		if (index >= numberOfGhosts) {
 			isGhostDead[index] = true;
 		}
 	}
@@ -182,10 +184,19 @@ function Start() {
 			}
 		}
 		music.play();
+		isMusicPaused = false;
 	}
 	resetPacmanPosition();
 	while (food_remain > 0) {
 		var emptyCell = findRandomEmptyCell(board);
+		let rand = Math.random();
+		if (rand < 0.60) {
+			boardBallsColors[`${emptyCell[0]},${emptyCell[1]}`] = ballsColors[0];
+		} else if (rand >= 0.60 && rand < 0.90) {
+			boardBallsColors[`${emptyCell[0]},${emptyCell[1]}`] = ballsColors[1];
+		} else {
+			boardBallsColors[`${emptyCell[0]},${emptyCell[1]}`] = ballsColors[2];
+		}
 		board[emptyCell[0]][emptyCell[1]] = 1;
 		food_remain--;
 	}
@@ -369,9 +380,10 @@ function UpdatePosition() {
 		} else {
 			lives--;
 			if (lives == 0) {
-				window.alert("You died! No more lives");
-				window.clearInterval();
-				music.stop();
+				window.clearInterval(interval);
+				window.alert("Loser!");
+				music.pause();
+				isMusicPaused = true;
 			} else {
 				score -= 10;
 			// window.clearInterval(interval);
@@ -406,10 +418,17 @@ function UpdatePosition() {
 			power = false;
 		}
 	}
-	if (score >= 100) {
+	lblScore.value = score;
+	let addTime = ateClock ? 5 : 0;
+	if (Math.floor(totalGameTime - time_elapsed + addTime) == 0) {
 		window.clearInterval(interval);
-		window.alert("Game completed");
-		music.stop();
+		if (score >= 100) {
+			window.alert("Winner!!!");
+		} else {
+			window.alert(`You are better than ${score} points`);
+		}
+		music.pause();
+		isMusicPaused = true;
 	} else {
 		Draw();
 	}
@@ -518,16 +537,12 @@ function moveGhost(ghostID) {
 		}
 	} else {
 		if (distance.x > 0 && x - 1 >= 0 && board[x - 1][y] != 4 && getGhostId(x - 1, y) == -1) {
-			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][0]--;
 		} else if (distance.x < 0 && x + 1 <= (row - 1) && board[x + 1][y] != 4 && getGhostId(x + 1, y) == -1) {
-			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][0]++;
 		} else if (distance.y > 0 && y - 1 >= 0 && board[x][y - 1] != 4 && getGhostId(x, y - 1) == -1) {
-			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][1]--;
 		} else if (distance.y < 0 && y + 1 <= (col - 1) && board[x][y + 1] != 4 && getGhostId(x, y + 1) == -1) {
-			// clearGhostPosition(ghostsPositions[ghostID][0], ghostsPositions[ghostID][1]);
 			ghostsPositions[ghostID][1]++;
 		}
 	}
@@ -595,44 +610,39 @@ function drawPrincessPeach(sizeX,sizeY) {
 
 function movePrincessPeach() {
 	if (!atePrincessPeach) {
-		let moved = false;
-		while (!moved) {
-			let random = Math.floor(Math.random() * 4 + 1);
-			if (random == 1) { // Right
-				if (princessPeachPosition[0] + 1 > row - 1 || board[princessPeachPosition[0] + 1][princessPeachPosition[1]] == 4) {
-					continue;
-				}
-				princessPeachPosition[0]++;
-				moved = true;
-			} else if (random == 2) { // Left
-				if (princessPeachPosition[0] - 1 < 0 || board[princessPeachPosition[0] - 1][princessPeachPosition[1]] == 4) {
-					continue;
-				}
-				princessPeachPosition[0]--;
-				moved = true;
-			} else if (random == 3) { // Up
-				if (princessPeachPosition[1] - 1 < 0 || board[princessPeachPosition[0]][princessPeachPosition[1] - 1] == 4) {
-					continue;
-				}
-				princessPeachPosition[1]--;
-				moved = true;
-			} else { // Down
-				if (princessPeachPosition[1] + 1 > col - 1 || board[princessPeachPosition[0]][princessPeachPosition[1] + 1] == 4) {
-					continue;
-				}
-				princessPeachPosition[1]++;
-				moved = true;
-			}
+		while (princessNextPosition == null || (princessPeachPosition[0] == princessNextPosition[0] && princessPeachPosition[1] == princessNextPosition[1])){
+			princessNextPosition = findRandomEmptyCell(board);
+		}
+		if (princessNextPosition[0] - princessPeachPosition[0] > 0 && board[princessPeachPosition[0] + 1][princessPeachPosition[1]] != 4) {
+			princessPeachPosition[0]++;
+		} else if (princessNextPosition[0] - princessPeachPosition[0] < 0 && board[princessPeachPosition[0] - 1][princessPeachPosition[1]] != 4) {
+			princessPeachPosition[0]--;
+		} else if (princessNextPosition[1] - princessPeachPosition[1] > 0 && board[princessPeachPosition[0]][princessPeachPosition[1] + 1] != 4) {
+			princessPeachPosition[1]++;
+		} else if (princessNextPosition[1] - princessPeachPosition[1] < 0 && board[princessPeachPosition[0]][princessPeachPosition[1] - 1] != 4){
+			princessPeachPosition[1]--;
+		} else if (princessNextPosition[0] - princessPeachPosition[0] == 0 || princessNextPosition[1] - princessPeachPosition[1] == 0) {
+			princessNextPosition = findRandomEmptyCell(board);
 		}
 	}
 }
 
 function randomSettings(){
 	_controlKeys = [38, 40, 37, 39];
+	document.getElementById("upKey").value = 38;
+	document.getElementById("downKey").value = 40;
+	document.getElementById("leftKey").value = 37;
+	document.getElementById("rightKey").value = 39;
 	_numberOfBalls = getRandomArbitrary(50,91);
+	document.getElementById("ballCount").value = _numberOfBalls;
 	_ballsColors = [getRandomColor(), getRandomColor(), getRandomColor()];
+	document.getElementById("color1").value = _ballsColors[0];
+	document.getElementById("color2").value = _ballsColors[1];
+	document.getElementById("color3").value = _ballsColors[2];
 	_totalGameTime = getRandomArbitrary(60,360);
+	document.getElementById("totalTime").value = _totalGameTime;
 	_numberOfGhosts = getRandomArbitrary(1,5);
+	document.getElementById("mobCount").value = _numberOfGhosts;
 	setParameters(_controlKeys, _numberOfBalls, _ballsColors, _totalGameTime, _numberOfGhosts);
 }
 
@@ -677,4 +687,14 @@ function getRandomColor() {
 		color += letters[Math.floor(Math.random() * 16)];
 	}
 	return color;
+}
+
+function startStopMusic() {
+	if (isMusicPaused) {
+		music.play();
+		isMusicPaused = false;
+	} else {
+		music.pause();
+		isMusicPaused = true;
+	}
 }

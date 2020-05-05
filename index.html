@@ -46,6 +46,7 @@
 				$("#navLogin").remove();
 				$("#welcomeRegisterBtn").remove();
 				$("#welcomeLoginBtn").remove();
+				$("#navGame").css('display', 'inline');
 			}
 		</script>
 		<script>
@@ -95,7 +96,7 @@
 			}
 		</script>
 	</nav>
-	<body>
+	<body style="background-image: url(pacman-background.png); background-repeat: no-repeat; background-size: cover;">
 			<div id='Game' style="display: none;">
 				<div id='Settings' style="position: absolute; padding-left: 600px;">
 					<div id='settings' class="form">
@@ -135,6 +136,7 @@
 						<div class="container">
 							<input type="button" value="Start" onclick="setSettings()"/>
 							<input type="button" value="Random" onclick="randomSettings()"/>
+							<input type="button" value="Start/Stop Music" onclick="startStopMusic()"/>
 						</div>
 					</div>
 				<script>
