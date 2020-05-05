@@ -9,8 +9,8 @@
 
 ## **Functionalities**:
 * Special pills that gives the player:
- * A pill that gives an extra life to the player (2 pills in each game).
- * A pill that gives the ability to eat the ghosts for 5 seconds (2 pills in each game).
+  * A pill that gives an extra life to the player (2 pills in each game).
+  * A pill that gives the ability to eat the ghosts for 5 seconds (2 pills in each game).
 
 ## How to play:
 * In the welcome screen, please login to your account or register and create a new one.
