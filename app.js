@@ -36,10 +36,14 @@ var ballsColors;
 var totalGameTime;
 var numberOfGhosts;
 
+// sound
+var music;
+
 $(document).ready(function () {
 	context = canvas.getContext("2d");
 	canvasHeight = canvas.height;
 	canvasWidth = canvas.width;
+	music = document.getElementById("myAudio");
 });
 
 function setParameters(_controlKeys, _numberOfBalls, _ballsColors, _totalGameTime, _numberOfGhosts) {
@@ -177,6 +181,7 @@ function Start() {
 				cnt--;
 			}
 		}
+		music.play();
 	}
 	resetPacmanPosition();
 	while (food_remain > 0) {
@@ -366,10 +371,10 @@ function UpdatePosition() {
 			if (lives == 0) {
 				window.alert("You died! No more lives");
 				window.clearInterval();
+				music.stop();
 			} else {
 				score -= 10;
 			// window.clearInterval(interval);
-			window.alert("You died!");
 			ghostsPositions = [[0, 0], [0, col - 1], [row - 1, 0], [row - 1, col - 1]];
 			resetPacmanPosition();
 			}
@@ -404,7 +409,7 @@ function UpdatePosition() {
 	if (score >= 100) {
 		window.clearInterval(interval);
 		window.alert("Game completed");
-		Start();
+		music.stop();
 	} else {
 		Draw();
 	}
@@ -541,7 +546,7 @@ function clearGhostPosition(i, j) {
 	y = j * sizeY + sizeY / 2;
 
 	context.beginPath();
-	context.rect(x - sizeX / 4, y - sizeY / 4, sizex / 2, sizeY);
+	context.rect(x - sizeX / 4, y - sizeY / 4, sizeX / 2, sizeY);
 	context.fillStyle = "white";
 	context.fill();
 }
