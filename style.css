@@ -6,6 +6,9 @@
   max-width: 900px;
   margin: auto;
 }
+#canvas {
+    border: 10px solid grey;
+}   
 header{
     font-family: titleFont;
 }
