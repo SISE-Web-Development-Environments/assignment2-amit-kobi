@@ -2,6 +2,10 @@
   font-family: titleFont;
   src: url(Handel\ Gothic\ Regular.ttf);
 }
+#Game{
+  max-width: 900px;
+  margin: auto;
+}
 header{
     font-family: titleFont;
 }
