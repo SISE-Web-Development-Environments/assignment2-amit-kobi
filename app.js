@@ -277,9 +277,33 @@ function Draw() {
 				DrawEye(center,(sizeX / 12));
 			} else if (board[i][j] == 1) {
 				context.beginPath();
-				context.arc(center.x, center.y, (sizeX / 4), 0, 2 * Math.PI); // circle
-				context.fillStyle = boardBallsColors[`${i},${j}`]; //color
+
+				// Ball size and color
+				if (boardBallsColors[`${i},${j}`] == ballsColors[0]) {
+					context.arc(center.x, center.y, (sizeX / 4), 0, 2 * Math.PI);
+				} else if (boardBallsColors[`${i},${j}`] == ballsColors[1]) {
+					context.arc(center.x, center.y, (sizeX / 3.5), 0, 2 * Math.PI);
+				} else {
+					context.arc(center.x, center.y, (sizeX / 3), 0, 2 * Math.PI);
+				}
+				context.fillStyle = boardBallsColors[`${i},${j}`];
 				context.fill();
+
+				// Write points on ball in the inverted color of the ball (to see the text better)
+				context.textAlign = 'center';
+				if (boardBallsColors[`${i},${j}`] == ballsColors[0]) {
+					context.font = '7px Ariel';
+					context.fillStyle = getInvertedColor(ballsColors[0]);
+					context.fillText('5', center.x, center.y + 2);
+				} else if (boardBallsColors[`${i},${j}`] == ballsColors[1]) {
+					context.font = '8px Ariel';
+					context.fillStyle = getInvertedColor(ballsColors[1]);
+					context.fillText('15', center.x, center.y + 2);
+				} else {
+					context.font = '9px Ariel';
+					context.fillStyle = getInvertedColor(ballsColors[2]);
+					context.fillText('25', center.x, center.y + 2);
+				}
 			} else if (board[i][j] == 4) { // Wall
 				context.beginPath();
 				context.rect(center.x - (sizeX / 2), center.y - (sizeY / 2), sizeX, sizeY);
@@ -710,4 +734,15 @@ function startStopMusic() {
 		music.pause();
 		isMusicPaused = true;
 	}
+}
+
+function getInvertedColor(hexTripletColor) {
+	let InvertedColor = hexTripletColor;
+	InvertedColor = InvertedColor.substring(1); // remove #
+	InvertedColor = parseInt(InvertedColor, 16); // convert to integer
+	InvertedColor = 0xFFFFFF ^ InvertedColor; // invert three bytes
+	InvertedColor = InvertedColor.toString(16); // convert to hex
+	InvertedColor = ("000000" + InvertedColor).slice(-6); // pad with leading zeros
+	InvertedColor = "#" + InvertedColor; // prepend #
+	return InvertedColor;
 }
